@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xem Danh Sách Lớp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="test.css">
+</head>
+<body class="admin-page">
+
+    <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <aside id="sidebar" class="sidebar">
+      <div class="teacher-card">
+                <div class="avatar"></div>
+                <h3 id="userName">Đang tải...</h3> 
+                <p id="userCode">...</p>
+            </div>
+
+
+            <nav>
+                <button class="active" onclick="window.location.href='xem_danh_sach_lop.html'">
+                    <i class="fas fa-list-ol"></i> <span>Xem danh sách lớp</span>
+                </button>
+
+                <button  onclick="window.location.href='#'">
+                    <i class="fas fa-marker"></i> <span>Nhập điểm bộ môn</span>
+                </button>
+
+                <button  onclick="window.location.href='#'">
+                    <i class="fas fa-user-check"></i> <span>Đánh giá hạnh kiểm</span>
+                </button>
+
+                <button  onclick="window.location.href='#'">
+                    <i class="fas fa-chart-line"></i> <span>Tổng hợp kết quả</span>
+                </button>
+
+                <button  onclick="window.location.href='#'">
+                    <i class="fas fa-calendar-alt"></i> <span>Xem thời khóa biểu</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main id="mainContent" class="content">
+            
+            <div class="card" style="height: 100%; display: flex; flex-direction: column;">
+                
+                <div class="class-list-header">
+                    <select class="class-dropdown" id="classSelect" onchange="updateClass()">
+                        <option value="12A1">Lớp 12A1</option>
+                        <option value="12A2">Lớp 12A2</option>
+                        <option value="10A5">Lớp 10A5</option>
+                    </select>
+                    
+                    <h2 class="page-title" id="classTitle">Danh sách học sinh lớp 12A1</h2>
+                </div>
+
+                <div class="table-scroll">
+                    <table class="placement-table view-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">STT</th>
+                                <th>Họ và Tên Học Sinh</th>
+                                <th style="width: 150px;">Mã học sinh</th>
+                                <th style="width: 100px;">Giới tính</th>
+                                <th style="width: 150px;">Ngày sinh</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+
+        // 1. MOCK DATA: THÔNG TIN CÁN BỘ
+        const currentUser = {
+            name: "Nguyễn Văn B",
+            code: "MSCB: 456789123JKQ"
+        };
+
+
+        // 1. MOCK DATA (Dữ liệu giả lập)
+        const mockData = {
+            "12A1": [
+                { name: "Phạm Văn Thái Dương", code: "HS12A101", gender: "Nam", dob: "20/10/2007" },
+                { name: "Nguyễn Doãn Hiếu", code: "HS12A102", gender: "Nam", dob: "15/05/2007" },
+                { name: "Hoàng Văn Hải", code: "HS12A103", gender: "Nam", dob: "01/01/2007" },
+                { name: "Trần Nguyễn Anh Tài", code: "HS12A104", gender: "Nam", dob: "02/09/2007" },
+                { name: "Lê Ngọc Phúc", code: "HS12A105", gender: "Nữ", dob: "08/03/2007" },
+                { name: "Nguyễn Văn Hoàng", code: "HS12A106", gender: "Nam", dob: "12/12/2007" },
+                { name: "Nguyễn Đình Bình Minh", code: "HS12A107", gender: "Nam", dob: "20/11/2007" },
+                { name: "Trần Văn Cường", code: "HS12A108", gender: "Nam", dob: "10/02/2007" },
+                { name: "Lê Thị Hồng", code: "HS12A109", gender: "Nữ", dob: "05/05/2007" },
+                { name: "Phạm Thị Bích", code: "HS12A110", gender: "Nữ", dob: "19/08/2007" },
+                { name: "Phạm Thị Bích", code: "HS12A110", gender: "Nữ", dob: "19/08/2007" },
+                { name: "Phạm Thị Bích", code: "HS12A110", gender: "Nữ", dob: "19/08/2007" },
+                { name: "Phạm Thị Bích", code: "HS12A110", gender: "Nữ", dob: "19/08/2007" },
+                { name: "Phạm Thị Bích", code: "HS12A110", gender: "Nữ", dob: "19/08/2007" },
+                { name: "Phạm Thị Bích", code: "HS12A110", gender: "Nữ", dob: "19/08/2007" },
+                { name: "Phạm Thị Bích", code: "HS12A110", gender: "Nữ", dob: "19/08/2007" },
+                { name: "Phạm Thị Bích", code: "HS12A110", gender: "Nữ", dob: "19/08/2007" },
+                { name: "Phạm Thị Bích", code: "HS12A110", gender: "Nữ", dob: "19/08/2007" },
+                { name: "Phạm Thị Bích", code: "HS12A110", gender: "Nữ", dob: "19/08/2007" },
+                { name: "Phạm Thị Bích", code: "HS12A110", gender: "Nữ", dob: "19/08/2007" },
+                { name: "Phạm Thị Bích", code: "HS12A110", gender: "Nữ", dob: "19/08/2007" }
+            ],
+            "12A2": [
+                { name: "Đặng Văn Lâm", code: "HS12A201", gender: "Nam", dob: "11/01/2007" },
+                { name: "Nguyễn Quang Hải", code: "HS12A202", gender: "Nam", dob: "12/04/2007" },
+                { name: "Đoàn Văn Hậu", code: "HS12A203", gender: "Nam", dob: "19/05/2007" },
+                { name: "Nguyễn Công Phượng", code: "HS12A204", gender: "Nam", dob: "21/01/2007" },
+                { name: "Lương Xuân Trường", code: "HS12A205", gender: "Nam", dob: "28/04/2007" },
+                { name: "Phan Văn Đức", code: "HS12A206", gender: "Nam", dob: "11/04/2007" }
+            ],
+            "10A5": [
+                { name: "Nguyễn Văn Toàn", code: "HS10A501", gender: "Nam", dob: "12/04/2009" },
+                { name: "Vũ Văn Thanh", code: "HS10A502", gender: "Nam", dob: "14/04/2009" },
+                { name: "Bùi Tiến Dũng", code: "HS10A503", gender: "Nam", dob: "28/02/2009" }
+            ]
+        };
+
+        // 2. Hàm Toggle Sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('toggleSidebar');
+            sidebar.classList.toggle('collapsed');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                toggleBtn.classList.add('moved');
+            } else {
+                toggleBtn.classList.remove('moved');
+            }
+        }
+
+
+        // 3. Hàm tải thông tin cán bộ
+        function loadUserProfile() {
+            document.getElementById('userName').innerText = currentUser.name;
+            document.getElementById('userCode').innerText = currentUser.code;
+        }
+
+
+        // 3. Hàm Render (Vẽ bảng)
+        function renderTable(className) {
+            const tbody = document.getElementById('tableBody');
+            const students = mockData[className] || [];
+            
+            // Xóa dữ liệu cũ
+            tbody.innerHTML = '';
+
+            if (students.length > 0) {
+                students.forEach((hs, index) => {
+                    const row = `
+                        <tr>
+                            <td class="text-center">
+                                <div class="cell-display">${index + 1}</div>
+                            </td>
+                            <td><div class="cell-display">${hs.name}</div></td>
+                            <td><div class="cell-display">${hs.code}</div></td>
+                            <td><div class="cell-display">${hs.gender}</div></td>
+                            <td><div class="cell-display">${hs.dob}</div></td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Không có dữ liệu</td></tr>';
+            }
+
+            // Cập nhật tiêu đề
+            document.getElementById('classTitle').innerText = "Danh sách học sinh Lớp " + className;
+        }
+
+        // 4. Sự kiện chọn lớp
+        function updateClass() {
+            const select = document.getElementById('classSelect');
+            const selectedClass = select.value;
+            renderTable(selectedClass);
+        }
+
+        // 5. Chạy lần đầu (Mặc định lớp 12A1)
+        window.onload = function() {
+            renderTable("12A1");
+            loadUserProfile()
+        };
+    </script>
+</body>
+</html>

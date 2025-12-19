@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin học sinh chi tiết</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="test.css">
+    <style>
+        /* CSS bổ sung để chia cột đẹp hơn cho nhiều dữ liệu */
+        .section-title {
+            color: var(--primary-color);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin: 25px 0 15px 0;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        /* Grid 3 cột cho các thông tin ngắn */
+        .row-3-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Responsive cho mobile */
+        @media (max-width: 768px) {
+            .row-3-cols { grid-template-columns: 1fr; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <button id="toggleSidebar" class="toggle-btn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        
+        <aside id="sidebar" class="sidebar">
+            <div class="teacher-card">
+                <div class="avatar"></div>
+                <h3 id="sidebar-name">Đang tải...</h3>
+                <p id="sidebar-id">...</p>
+            </div>
+
+            <nav>
+                <button class="active" onclick="window.location.href='thong-tin.html'">
+                    <i class="fas fa-user"></i> <span>Xem thông tin cá nhân</span>
+                </button>
+                <button onclick="window.location.href='thoi-khoa-bieu.html'">
+                    <i class="fas fa-calendar-alt"></i> <span>Xem thời khóa biểu</span>
+                </button>
+                <button onclick="window.location.href='ket-qua-hoc-tap.html'">
+                    <i class="fas fa-chart-line"></i> <span>Xem kết quả học tập</span>
+                </button>
+                <button class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main id="mainContent" class="content">
+            
+            <h2 class="page-title"><i class="fas fa-id-card"></i> Hồ sơ học sinh</h2>
+
+            <div class="card info-form">
+                
+                <div class="profile-header">
+                    <div class="profile-avatar-large"></div>
+                    <h2 style="margin: 0; color: var(--text-dark);" id="header-name">Nguyen Van A</h2>
+                    <p style="color: #666; font-weight: bold;" id="header-class">Lớp: ...</p>
+                    <span class="status-badge status-active" id="header-status" style="margin-top:5px; display:inline-block;">Đang học</span>
+                </div>
+
+                <form>
+                    <div class="section-title"><i class="fas fa-user"></i> Thông tin cá nhân</div>
+                    
+                    <div class="row-2-cols">
+                        <div class="form-group">
+                            <label>Mã học sinh (MaHS):</label>
+                            <input type="text" class="form-control" id="val-mahs" readonly style="background-color: #e9ecef;">
+                        </div>
+                        <div class="form-group">
+                            <label>Mã định danh (CCCD/ĐDCN):</label>
+                            <input type="text" class="form-control" id="val-madinhdanh">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Họ và tên:</label>
+                        <input type="text" class="form-control" id="val-hoten" style="font-weight: bold;">
+                    </div>
+
+                    <div class="row-3-cols">
+                        <div class="form-group">
+                            <label>Ngày sinh:</label>
+                            <input type="date" class="form-control" id="val-ngaysinh">
+                        </div>
+                        <div class="form-group">
+                            <label>Giới tính:</label>
+                            <select class="form-control" id="val-gioitinh">
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Lớp (MaLop):</label>
+                            <input type="text" class="form-control" id="val-malop" readonly>
+                        </div>
+                    </div>
+
+                    <div class="row-2-cols">
+                        <div class="form-group">
+                            <label>Dân tộc:</label>
+                            <input type="text" class="form-control" id="val-dantoc">
+                        </div>
+                        <div class="form-group">
+                            <label>Tôn giáo:</label>
+                            <input type="text" class="form-control" id="val-tongiao">
+                        </div>
+                    </div>
+
+                    <div class="section-title"><i class="fas fa-map-marker-alt"></i> Thông tin liên hệ</div>
+
+                    <div class="row-2-cols">
+                        <div class="form-group">
+                            <label>Số điện thoại:</label>
+                            <input type="text" class="form-control" id="val-sodt">
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" class="form-control" id="val-email">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hộ khẩu thường trú:</label>
+                        <input type="text" class="form-control" id="val-hokhau">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quê quán:</label>
+                        <input type="text" class="form-control" id="val-quequan">
+                    </div>
+
+                    <div class="section-title"><i class="fas fa-users"></i> Thông tin gia đình</div>
+
+                    <div class="row-2-cols">
+                        <div class="form-group">
+                            <label>Họ tên Bố:</label>
+                            <input type="text" class="form-control" id="val-hotenbo">
+                        </div>
+                        <div class="form-group">
+                            <label>Nghề nghiệp Bố:</label>
+                            <input type="text" class="form-control" id="val-nghebo">
+                        </div>
+                    </div>
+
+                    <div class="row-2-cols">
+                        <div class="form-group">
+                            <label>Họ tên Mẹ:</label>
+                            <input type="text" class="form-control" id="val-hotenme">
+                        </div>
+                        <div class="form-group">
+                            <label>Nghề nghiệp Mẹ:</label>
+                            <input type="text" class="form-control" id="val-ngheme">
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button type="button" class="btn btn-primary" onclick="alert('Đã cập nhật thông tin thành công!')">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </main>
+    </div>
+
+<script>
+    // --- 1. MOCK DATA (Dữ liệu giả lập từ DB Hocsinh) ---
+    const mockStudentData = {
+        MaHS: "2023567890",
+        HoTenHS: "Nguyễn Văn A",
+        MaDinhDanh: "001205000999",
+        GioiTinh: "Nam",
+        NgaySinh: "2006-05-20", // Định dạng yyyy-MM-dd để input date hiểu
+        SoDT: "0912345678",
+        Email: "nguyenvana@thpt.edu.vn",
+        DanToc: "Kinh",
+        TonGiao: "Không",
+        HoKhau: "Số 15, Ngõ 68, Đường Cầu Giấy, Phường Quan Hoa, Quận Cầu Giấy, Hà Nội",
+        QueQuan: "Nam Định",
+        HoTenBo: "Nguyễn Văn B",
+        NgheNghiepBo: "Kỹ sư xây dựng",
+        HoTenMe: "Trần Thị C",
+        NgheNghiepMe: "Giáo viên",
+        MaTinhTrang: "Đang học",
+        MaTruong: "THPT_QG",
+        MaLop: "12A1"
+    };
+
+    // --- 2. HÀM ĐỔ DỮ LIỆU VÀO FORM ---
+    function loadStudentInfo() {
+        // Cập nhật Header và Sidebar
+        document.getElementById('sidebar-name').innerText = mockStudentData.HoTenHS;
+        document.getElementById('sidebar-id').innerText = "MSHS: " + mockStudentData.MaHS;
+        document.getElementById('header-name').innerText = mockStudentData.HoTenHS;
+        document.getElementById('header-class').innerText = "Lớp: " + mockStudentData.MaLop;
+        document.getElementById('header-status').innerText = mockStudentData.MaTinhTrang;
+
+        // Cập nhật các ô Input
+        document.getElementById('val-mahs').value = mockStudentData.MaHS;
+        document.getElementById('val-madinhdanh').value = mockStudentData.MaDinhDanh;
+        document.getElementById('val-hoten').value = mockStudentData.HoTenHS;
+        document.getElementById('val-ngaysinh').value = mockStudentData.NgaySinh;
+        document.getElementById('val-gioitinh').value = mockStudentData.GioiTinh;
+        document.getElementById('val-malop').value = mockStudentData.MaLop;
+        
+        document.getElementById('val-dantoc').value = mockStudentData.DanToc;
+        document.getElementById('val-tongiao').value = mockStudentData.TonGiao;
+        
+        document.getElementById('val-sodt').value = mockStudentData.SoDT;
+        document.getElementById('val-email').value = mockStudentData.Email;
+        document.getElementById('val-hokhau').value = mockStudentData.HoKhau;
+        document.getElementById('val-quequan').value = mockStudentData.QueQuan;
+        
+        document.getElementById('val-hotenbo').value = mockStudentData.HoTenBo;
+        document.getElementById('val-nghebo').value = mockStudentData.NgheNghiepBo;
+        document.getElementById('val-hotenme').value = mockStudentData.HoTenMe;
+        document.getElementById('val-ngheme').value = mockStudentData.NgheNghiepMe;
+    }
+
+    // --- 3. XỬ LÝ SIDEBAR (Code cũ của bạn) ---
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load dữ liệu ngay khi vào trang
+        loadStudentInfo();
+
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+
+        if (toggleBtn && sidebar && mainContent) {
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+                toggleBtn.classList.add('moved');
+                toggleBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            }
+
+            toggleBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                toggleBtn.classList.toggle('moved');
+
+                if (sidebar.classList.contains('collapsed')) {
+                    toggleBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                    localStorage.setItem('sidebarCollapsed', 'true');
+                } else {
+                    toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                    localStorage.setItem('sidebarCollapsed', 'false');
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

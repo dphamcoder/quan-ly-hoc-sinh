@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xem Thời Khóa Biểu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="test.css">
+    
+    <style>
+        /* CSS tô màu cho từng môn học */
+        .subject-badge {
+            display: block;
+            padding: 8px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 2px;
+        }
+
+        /* Bảng màu môn học */
+        .sub-math { background: linear-gradient(135deg, #4e73df, #224abe); } /* Toán */
+        .sub-lit { background: linear-gradient(135deg, #e74a3b, #c0392b); } /* Văn */
+        .sub-eng { background: linear-gradient(135deg, #f6c23e, #dda20a); color: #333; } /* Anh */
+        .sub-phys { background: linear-gradient(135deg, #36b9cc, #258391); } /* Lý */
+        .sub-chem { background: linear-gradient(135deg, #1cc88a, #13855c); } /* Hóa */
+        .sub-bio { background: linear-gradient(135deg, #20c9a6, #168f76); } /* Sinh */
+        .sub-hist { background: linear-gradient(135deg, #858796, #60616f); } /* Sử */
+        .sub-geo { background: linear-gradient(135deg, #fd7e14, #d35400); } /* Địa */
+        .sub-gdcd { background: linear-gradient(135deg, #6610f2, #520dc2); } /* GDCD */
+        .sub-tech { background: linear-gradient(135deg, #6f42c1, #59359a); } /* Tin/CN */
+        .sub-pe { background: linear-gradient(135deg, #28a745, #1e7e34); } /* Thể dục */
+        .sub-shcn { background: #333; } /* SHCN/Chào cờ */
+        .sub-default { background: #f8f9fa; color: #333; border: 1px solid #ddd; } /* Trống */
+
+        /* Căn chỉnh bảng */
+        .timetable th, .timetable td {
+            text-align: center;
+            vertical-align: middle;
+            height: 60px; /* Chiều cao cố định cho ô */
+        }
+        .session-row {
+            background-color: #eaecf4;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #555;
+        }
+        
+        /* Style cho thanh điều khiển chọn lớp */
+        .control-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid #d1d3e2;
+        }
+        .class-select {
+            padding: 8px 15px;
+            border: 2px solid #4e73df;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #333;
+            min-width: 150px;
+            outline: none;
+        }
+    </style>
+</head>
+<body class="admin-page">
+
+    <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <aside id="sidebar" class="sidebar">
+            <div class="teacher-card">
+                <div class="avatar"></div>
+                <h3 id="userName">Đang tải...</h3> 
+                <p id="userCode">...</p>
+            </div>
+
+
+            <nav>
+                <button onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i> <span>Thông tin cá nhân</span>
+                </button>
+                <button class="active" onclick="window.location.href='tkb.html'">
+                    <i class="fas fa-calendar-alt"></i> <span>Thời khóa biểu</span>
+                </button>
+                <button onclick="window.location.href='diem.html'">
+                    <i class="fas fa-chart-line"></i> <span>Kết quả học tập</span>
+                </button>
+                <button class="logout-btn" onclick="dangXuat()">
+                    <i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main id="mainContent" class="content">
+            
+            <h2 style="margin-bottom: 20px; color: var(--primary-color);">
+                <i class="fas fa-search"></i> TRA CỨU THỜI KHÓA BIỂU
+            </h2>
+
+            <div class="control-bar">
+                <label style="font-weight: bold;">Chọn Lớp:</label>
+                <select class="class-select" id="classSelector" onchange="changeClass()">
+                    <option value="12A1">Lớp 12A1</option>
+                    <option value="11B2">Lớp 11B2</option>
+                    <option value="10C5">Lớp 10C5</option>
+                </select>
+                <span style="color: #888; font-style: italic; margin-left: auto;">
+                    Học kỳ 1 - Năm học 2025-2026
+                </span>
+            </div>
+
+            <div class="card">
+                <h3 id="tableHeader" style="text-align: center; color: #4e73df; margin-bottom: 15px;">
+                    Thời khóa biểu Lớp 12A1
+                </h3>
+                <div class="table-responsive">
+                    <table class="custom-table timetable">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">Tiết</th>
+                                <th>Thứ 2</th>
+                                <th>Thứ 3</th>
+                                <th>Thứ 4</th>
+                                <th>Thứ 5</th>
+                                <th>Thứ 6</th>
+                                <th>Thứ 7</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tkbBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-sticky-note" style="color: #f6c23e;"></i> Ghi chú chung</h3>
+                <textarea class="form-control" rows="3" placeholder="Nhập ghi chú cho lớp này..."></textarea>
+                <div style="margin-top: 10px; text-align: right;">
+                    <button class="btn btn-primary"><i class="fas fa-save"></i> Lưu ghi chú</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+
+            // 1. MOCK DATA: THÔNG TIN CÁN BỘ
+        const currentUser = {
+            name: "Nguyễn Văn B",
+            code: "MSCB: 456789123JKQ"
+        };
+
+        // 1. MOCK DATA: Dữ liệu TKB
+        const allSchedules = {
+            "12A1": [ 
+                { p: 1, t2: "Chào cờ", t3: "Văn", t4: "Sinh", t5: "Toán", t6: "Anh", t7: "Tin" },
+                { p: 2, t2: "Toán", t3: "Văn", t4: "Lý", t5: "Toán", t6: "Anh", t7: "Tin" },
+                { p: 3, t2: "Toán", t3: "Anh", t4: "Địa", t5: "Hóa", t6: "Văn", t7: "CN" },
+                { p: 4, t2: "Lý", t3: "Tin", t4: "GDCD", t5: "Lý", t6: "Sinh", t7: "TD" },
+                // Chiều bắt đầu từ tiết 5
+                { p: 5, t2: "Hóa (TC)", t3: "Tin", t4: "TD", t5: "", t6: "SHCN", t7: "TD" },
+                { p: 6, t2: "", t3: "", t4: "", t5: "", t6: "", t7: "" },
+                { p: 7, t2: "", t3: "", t4: "", t5: "", t6: "", t7: "" },
+                { p: 8, t2: "", t3: "", t4: "", t5: "", t6: "", t7: "" }
+            ],
+            "11B2": [ 
+                { p: 1, t2: "Chào cờ", t3: "Toán", t4: "Văn", t5: "Sử", t6: "Địa", t7: "GDCD" },
+                { p: 2, t2: "Văn", t3: "Toán", t4: "Văn", t5: "Sử", t6: "Địa", t7: "Anh" },
+                { p: 3, t2: "Văn", t3: "Sử", t4: "Anh", t5: "Văn", t6: "Toán", t7: "Tin" },
+                { p: 4, t2: "Anh", t3: "Địa", t4: "Sinh", t5: "Hóa", t6: "Lý", t7: "SHCN" },
+                // Chiều
+                { p: 5, t2: "", t3: "", t4: "TD", t5: "", t6: "", t7: "" },
+                { p: 6, t2: "", t3: "", t4: "", t5: "", t6: "", t7: "" },
+                { p: 7, t2: "", t3: "", t4: "", t5: "", t6: "", t7: "" },
+                { p: 8, t2: "", t3: "", t4: "", t5: "", t6: "", t7: "" }
+            ],
+            "10C5": [ 
+                { p: 1, t2: "Chào cờ", t3: "Hóa", t4: "Toán", t5: "Văn", t6: "Lý", t7: "Anh" },
+                { p: 2, t2: "Toán", t3: "Hóa", t4: "Toán", t5: "Văn", t6: "Lý", t7: "Anh" },
+                { p: 3, t2: "Sinh", t3: "Anh", t4: "Tin", t5: "Sử", t6: "Địa", t7: "CN" },
+                { p: 4, t2: "TD", t3: "Văn", t4: "Tin", t5: "GDCD", t6: "SHCN", t7: "" },
+                // Chiều
+                { p: 5, t2: "TD", t3: "", t4: "", t5: "", t6: "", t7: "" },
+                { p: 6, t2: "", t3: "", t4: "", t5: "", t6: "", t7: "" },
+                { p: 7, t2: "", t3: "", t4: "", t5: "", t6: "", t7: "" },
+                { p: 8, t2: "", t3: "", t4: "", t5: "", t6: "", t7: "" }
+            ]
+        };
+
+        // 2. Map màu môn học
+        function getSubjectClass(subjectName) {
+            if (!subjectName) return "sub-default";
+            const s = subjectName.toLowerCase();
+            if (s.includes("toán")) return "sub-math";
+            if (s.includes("văn")) return "sub-lit";
+            if (s.includes("anh")) return "sub-eng";
+            if (s.includes("lý")) return "sub-phys";
+            if (s.includes("hóa")) return "sub-chem";
+            if (s.includes("sinh")) return "sub-bio";
+            if (s.includes("sử")) return "sub-hist";
+            if (s.includes("địa")) return "sub-geo";
+            if (s.includes("gdcd")) return "sub-gdcd";
+            if (s.includes("tin") || s.includes("cn")) return "sub-tech";
+            if (s.includes("td")) return "sub-pe";
+            if (s.includes("shcn") || s.includes("chào")) return "sub-shcn";
+            return "sub-math"; 
+        }
+
+        // 3. Hàm Vẽ Bảng (ĐÃ CHỈNH SỬA: Chiều bắt đầu từ tiết 5)
+        function renderSchedule(className) {
+            const tbody = document.getElementById('tkbBody');
+            let data = allSchedules[className] || [];
+            
+            // Fill thêm nếu dữ liệu thiếu
+            if(data.length < 8) {
+                for(let i = data.length + 1; i <= 8; i++) {
+                    data.push({ p: i, t2: "", t3: "", t4: "", t5: "", t6: "", t7: "" });
+                }
+            }
+
+            tbody.innerHTML = ''; 
+
+            // === 3.1. BUỔI SÁNG (TIẾT 1 -> 4) ===
+            tbody.innerHTML += `<tr class="session-row"><td colspan="7">Buổi Sáng</td></tr>`;
+            
+            // Loop từ 0 đến 3 (tức là lấy phần tử thứ 1, 2, 3, 4 trong mảng)
+            for(let i = 0; i < 4; i++) {
+                if(data[i]) {
+                    const tr = createRowHTML(data[i]);
+                    tbody.appendChild(tr);
+                }
+            }
+
+            // === 3.2. BUỔI CHIỀU (TIẾT 5 -> 8) ===
+            tbody.innerHTML += `<tr class="session-row"><td colspan="7">Buổi Chiều</td></tr>`;
+            
+            // Loop từ 4 đến hết (tức là lấy phần tử thứ 5 trở đi)
+            for(let i = 4; i < data.length; i++) {
+                if(data[i]) {
+                    const tr = createRowHTML(data[i]);
+                    tbody.appendChild(tr);
+                }
+            }
+
+            // Cập nhật tiêu đề
+            document.getElementById('tableHeader').innerText = "Thời khóa biểu Lớp " + className;
+        }
+
+        
+
+        // Helper: Tạo HTML cho 1 dòng
+        function createRowHTML(row) {
+            const tr = document.createElement('tr');
+            let html = `<td><strong>${row.p}</strong></td>`;
+            ['t2','t3','t4','t5','t6','t7'].forEach(day => {
+                let sub = row[day] || "";
+                let cls = sub ? getSubjectClass(sub) : "";
+                html += sub ? `<td><span class="subject-badge ${cls}">${sub}</span></td>` : `<td></td>`;
+            });
+            tr.innerHTML = html;
+            return tr;
+        }
+
+        // 4. Sự kiện đổi lớp
+        function changeClass() {
+            const select = document.getElementById('classSelector');
+            renderSchedule(select.value);
+        }
+
+        // 5. Sidebar Toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+            document.querySelector('.toggle-btn').classList.toggle('moved');
+        }
+
+        function dangXuat() {
+            if(confirm('Bạn có chắc chắn muốn đăng xuất?')) window.location.href = 'login.html';
+        }
+        // 3. Hàm tải thông tin cán bộ
+        function loadUserProfile() {
+            document.getElementById('userName').innerText = currentUser.name;
+            document.getElementById('userCode').innerText = currentUser.code;
+        }
+
+
+        // Chạy lần đầu
+        window.onload = function() {
+            renderSchedule("12A1");
+            loadUserProfile();
+        };
+    </script>
+</body>
+</html>

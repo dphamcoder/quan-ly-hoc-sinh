@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xem Thời Khóa Biểu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="test.css">
+    
+    <style>
+        /* CSS tô màu cho từng môn học */
+        .subject-badge {
+            display: block;
+            padding: 8px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 2px;
+        }
+
+        /* Bảng màu môn học */
+        .sub-math { background: linear-gradient(135deg, #4e73df, #224abe); } /* Toán */
+        .sub-lit { background: linear-gradient(135deg, #e74a3b, #c0392b); } /* Văn */
+        .sub-eng { background: linear-gradient(135deg, #f6c23e, #dda20a); color: #333; } /* Anh */
+        .sub-phys { background: linear-gradient(135deg, #36b9cc, #258391); } /* Lý */
+        .sub-chem { background: linear-gradient(135deg, #1cc88a, #13855c); } /* Hóa */
+        .sub-bio { background: linear-gradient(135deg, #20c9a6, #168f76); } /* Sinh */
+        .sub-hist { background: linear-gradient(135deg, #858796, #60616f); } /* Sử */
+        .sub-geo { background: linear-gradient(135deg, #fd7e14, #d35400); } /* Địa */
+        .sub-gdcd { background: linear-gradient(135deg, #6610f2, #520dc2); } /* GDCD */
+        .sub-tech { background: linear-gradient(135deg, #6f42c1, #59359a); } /* Tin/CN */
+        .sub-pe { background: linear-gradient(135deg, #28a745, #1e7e34); } /* Thể dục */
+        .sub-shcn { background: #333; } /* SHCN/Chào cờ */
+        .sub-default { background: #f8f9fa; color: #333; border: 1px solid #ddd; } /* Trống */
+
+        /* Căn chỉnh bảng */
+        .timetable th, .timetable td {
+            text-align: center;
+            vertical-align: middle;
+            height: 60px; /* Chiều cao cố định cho ô */
+        }
+        .session-row {
+            background-color: #eaecf4;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <aside id="sidebar" class="sidebar">
+      <div class="teacher-card">
+                <div class="avatar"></div>
+                <h3 id="userName">Đang tải...</h3> 
+                <p id="userCode">...</p>
+            </div>
+
+
+            <nav>
+                <button onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i> <span>Thông tin cá nhân</span>
+                </button>
+                <button class="active" onclick="window.location.href='tkb.html'">
+                    <i class="fas fa-calendar-alt"></i> <span>Thời khóa biểu</span>
+                </button>
+                <button onclick="window.location.href='diem.html'">
+                    <i class="fas fa-chart-line"></i> <span>Kết quả học tập</span>
+                </button>
+                <button class="logout-btn" onclick="dangXuat()">
+                    <i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main id="mainContent" class="content">
+            
+            <h2 style="margin-bottom: 20px; color: var(--primary-color);">
+                <i class="fas fa-calendar-check"></i> THỜI KHÓA BIỂU - HỌC KỲ 1
+            </h2>
+
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="custom-table timetable">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">Tiết</th>
+                                <th>Thứ 2</th>
+                                <th>Thứ 3</th>
+                                <th>Thứ 4</th>
+                                <th>Thứ 5</th>
+                                <th>Thứ 6</th>
+                                <th>Thứ 7</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tkbBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-sticky-note" style="color: #f6c23e;"></i> Ghi chú cá nhân</h3>
+                <textarea class="form-control" rows="3" placeholder="Nhập ghi chú cho tuần này... (Ví dụ: Kiểm tra 15p Toán thứ 4)"></textarea>
+                <div style="margin-top: 10px; text-align: right;">
+                    <button class="btn btn-primary"><i class="fas fa-save"></i> Lưu ghi chú</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+                // 1. MOCK DATA: THÔNG TIN CÁN BỘ
+        const currentUser = {
+            name: "Nguyễn Văn B",
+            code: "MSCB: 456789123JKQ"
+        };
+
+
+        // 1. MOCK DATA: Dữ liệu thời khóa biểu
+        const scheduleData = [
+            // SÁNG
+            { period: 1, t2: "Chào cờ", t3: "Ngữ Văn", t4: "Sinh học", t5: "Toán", t6: "Tiếng Anh", t7: "Tin học" },
+            { period: 2, t2: "Toán", t3: "Ngữ Văn", t4: "Lịch sử", t5: "Toán", t6: "Tiếng Anh", t7: "Tin học" },
+            { period: 3, t2: "Toán", t3: "Tiếng Anh", t4: "Địa lý", t5: "Hóa học", t6: "Ngữ Văn", t7: "Công nghệ" },
+            { period: 4, t2: "Vật lý", t3: "Tin học", t4: "GDCD", t5: "Vật lý", t6: "Sinh học", t7: "Thể dục" },
+            { period: 5, t2: "Hóa học", t3: "Tin học", t4: "Thể dục", t5: "", t6: "SHCN", t7: "Thể dục" },
+            // CHIỀU (Tách ra để dễ quản lý)
+            { period: 6, t2: "", t3: "Toán (TC)", t4: "", t5: "Lý (TC)", t6: "", t7: "" },
+            { period: 7, t2: "", t3: "Toán (TC)", t4: "", t5: "Lý (TC)", t6: "", t7: "" },
+            { period: 8, t2: "", t3: "Văn (TC)", t4: "", t5: "Anh (TC)", t6: "", t7: "" }
+        ];
+
+        // 2. Map tên môn học sang Class màu sắc
+        function getSubjectClass(subjectName) {
+            if (!subjectName) return "sub-default"; // Ô trống
+            
+            const lowerName = subjectName.toLowerCase();
+            if (lowerName.includes("toán")) return "sub-math";
+            if (lowerName.includes("văn")) return "sub-lit";
+            if (lowerName.includes("anh")) return "sub-eng";
+            if (lowerName.includes("lý") || lowerName.includes("vật lý")) return "sub-phys";
+            if (lowerName.includes("hóa")) return "sub-chem";
+            if (lowerName.includes("sinh")) return "sub-bio";
+            if (lowerName.includes("sử")) return "sub-hist";
+            if (lowerName.includes("địa")) return "sub-geo";
+            if (lowerName.includes("gdcd")) return "sub-gdcd";
+            if (lowerName.includes("tin") || lowerName.includes("công nghệ")) return "sub-tech";
+            if (lowerName.includes("thể dục")) return "sub-pe";
+            if (lowerName.includes("shcn") || lowerName.includes("chào cờ")) return "sub-shcn";
+            
+            return "sub-math"; // Mặc định nếu không khớp (hoặc dùng sub-default)
+        }
+
+        // 3. Hàm Render
+        function renderSchedule() {
+            const tbody = document.getElementById('tkbBody');
+            tbody.innerHTML = '';
+
+            // Thêm dòng ngăn cách Sáng
+            tbody.innerHTML += `<tr class="session-row"><td colspan="7">Buổi Sáng</td></tr>`;
+
+            // Render 5 tiết sáng
+            for (let i = 0; i < 4; i++) {
+                const row = createRow(scheduleData[i]);
+                tbody.appendChild(row);
+            }
+
+            // Thêm dòng ngăn cách Chiều
+            tbody.innerHTML += `<tr class="session-row"><td colspan="7">Buổi Chiều</td></tr>`;
+
+            // Render 3 tiết chiều
+            for (let i = 4; i < 8; i++) {
+                const row = createRow(scheduleData[i]);
+                tbody.appendChild(row);
+            }
+        }
+
+        // Helper tạo dòng HTML
+        function createRow(data) {
+            const tr = document.createElement('tr');
+            
+            // Các ngày trong tuần
+            const days = ['t2', 't3', 't4', 't5', 't6', 't7'];
+            
+            // Cột Tiết
+            let html = `<td><strong>${data.period}</strong></td>`;
+
+            // Các cột Thứ
+            days.forEach(day => {
+                const subject = data[day];
+                if (subject) {
+                    const colorClass = getSubjectClass(subject);
+                    html += `<td><span class="subject-badge ${colorClass}">${subject}</span></td>`;
+                } else {
+                    html += `<td></td>`; // Ô trống
+                }
+            });
+
+            tr.innerHTML = html;
+            return tr;
+        }
+
+        // 3. Hàm tải thông tin cán bộ
+        function loadUserProfile() {
+            document.getElementById('userName').innerText = currentUser.name;
+            document.getElementById('userCode').innerText = currentUser.code;
+        }
+
+
+        // 4. Các hàm hệ thống (Sidebar, Logout)
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+            document.querySelector('.toggle-btn').classList.toggle('moved');
+        }
+
+        function dangXuat() {
+            if(confirm('Bạn có chắc chắn muốn đăng xuất?')) window.location.href = 'login.html';
+        }
+
+        // Chạy khi tải trang
+        window.onload = function() {
+            renderSchedule();
+            loadUserProfile();
+        };
+    </script>
+</body>
+</html>

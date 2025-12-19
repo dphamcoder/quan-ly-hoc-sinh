@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Tài khoản</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="test.css">
+</head>
+<body class="admin-page">
+
+    <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <aside id="sidebar" class="sidebar">
+            <div class="teacher-card">
+                <div class="avatar"></div>
+                <h3 id="userName">Đang tải...</h3> 
+                <p id="userCode">...</p>
+            </div>
+
+            <nav>
+                <button onclick="window.location.href='profile.html'"><i class="fas fa-user"></i> <span>Thông tin cá nhân</span></button>
+                <button class="active"><i class="fas fa-users-cog"></i> <span>Quản lý tài khoản</span></button>
+                <button><i class="fas fa-user-graduate"></i> <span>Quản lý học sinh</span></button>
+                <button><i class="fas fa-chalkboard-teacher"></i> <span>Phân công giảng dạy</span></button>
+                <button><i class="fas fa-layer-group"></i> <span>Xếp lớp</span></button>
+                <button><i class="fas fa-calendar-alt"></i> <span>Thời khóa biểu</span></button>
+                <button><i class="fas fa-chart-pie"></i> <span>Thống kê báo cáo</span></button>
+                <button class="logout-btn" onclick="dangXuat()"><i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span></button>
+            </nav>
+        </aside>
+
+        <main id="mainContent" class="content">
+            <div class="admin-wrapper">
+                
+                <div class="admin-main-col card">
+                    <div class="admin-header">
+                        <h2>QUẢN LÝ TÀI KHOẢN NGƯỜI DÙNG</h2>
+                        <div class="search-box">
+                            <input type="text" id="searchInput" placeholder="Tìm tên, Mã số, SĐT..." onkeyup="searchAccounts()">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <button onclick="searchAccounts()"><i class="fas fa-search"></i></button>
+                    </div>
+
+                    <div class="admin-table-container">
+                        <table class="custom-table admin-table" id="userTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">STT</th>
+                                    <th>Tài khoản (ID)</th>
+                                    <th>Họ và Tên</th>
+                                    <th>Vai trò</th>
+                                    <th>Email</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="admin-right-col card">
+                    <div class="teacher-card mini-profile">
+                        <div class="avatar"></div>
+                        <h3 id="display-name">Chọn người dùng</h3>
+                        <p id="display-id">---</p>
+                    </div>
+
+                    <form class="admin-form">
+                        <div class="form-group">
+                            <label>Tài khoản (ID) :</label>
+                            <input type="text" class="form-control" id="detail-id">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Họ và Tên :</label>
+                            <input type="text" class="form-control" id="detail-name">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mật khẩu :</label>
+                            <input type="password" class="form-control" placeholder="Đổi mật khẩu..." style="background: #fff;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Vai trò :</label>
+                            <select class="form-control" id="detail-role">
+                                <option value="Cán bộ">Cán bộ</option>
+                                <option value="Giáo viên">Giáo viên</option>
+                                <option value="Học sinh">Học sinh</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Email :</label>
+                            <input type="text" class="form-control" id="detail-email">
+                        </div>
+
+                        <div class="form-group">
+                            <label>SĐT :</label>
+                            <input type="text" class="form-control" id="detail-SDT">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Trạng thái :</label>
+                            <select class="form-control" id= "detail-active" onchange="changeColor(this)">
+                                <option value="Đã kích hoạt" style="color: rgb(0, 251, 42);font-weight: bold;">Đã kích hoạt</option>
+                                <option value="Không kích hoạt" style="color: red;font-weight: bold;">Không kích hoạt</option>
+                            </select>
+                        </div>
+
+                        <div class="action-buttons">
+                            <div class="btn-row">
+                                <button type="button" class="btn btn-outline">Thêm</button>
+                                <button type="button" class="btn btn-outline">Xóa</button>
+                            </div>
+                            <button type="button" class="btn btn-primary full-width">Cập nhật</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+
+            // 1. MOCK DATA: THÔNG TIN CÁN BỘ
+        const currentUser = {
+            name: "Nguyễn Văn B",
+            code: "MSCB: 456789123JKQ"
+        };
+
+
+        // --- 1. MOCK DATA (DỮ LIỆU GIẢ LẬP) ---
+        const mockAccounts = [
+            { id: "GV00123", name: "Nguyễn Văn A", role: "Giáo viên", email: "nguyenvana@edu.vn", phone: "0987654321", status: "Đã kích hoạt" },
+            { id: "HS99887", name: "Trần Thị B", role: "Học sinh", email: "tranthib@student.edu.vn", phone: "0912345678", status: "Đã kích hoạt" },
+            { id: "CB11223", name: "Lê Văn C", role: "Cán bộ", email: "levanc@admin.edu.vn", phone: "0909090909", status: "Không kích hoạt" },
+            { id: "GV00124", name: "Phạm Thị D", role: "Giáo viên", email: "phamd@edu.vn", phone: "0988888888", status: "Đã kích hoạt" },
+            { id: "HS99888", name: "Hoàng Văn E", role: "Học sinh", email: "hoange@student.edu.vn", phone: "0977777777", status: "Đã kích hoạt" },
+            { id: "CB11224", name: "Vũ Thị F", role: "Cán bộ", email: "vuf@admin.edu.vn", phone: "0966666666", status: "Đã kích hoạt" },
+            { id: "HS99889", name: "Đặng Văn G", role: "Học sinh", email: "dangg@student.edu.vn", phone: "0955555555", status: "Không kích hoạt" },
+            { id: "GV00125", name: "Bùi Thị H", role: "Giáo viên", email: "buih@edu.vn", phone: "0944444444", status: "Đã kích hoạt" },
+            { id: "HS99890", name: "Ngô Văn I", role: "Học sinh", email: "ngoi@student.edu.vn", phone: "0933333333", status: "Đã kích hoạt" },
+            { id: "GV00126", name: "Đinh Thị K", role: "Giáo viên", email: "dinhk@edu.vn", phone: "0922222222", status: "Không kích hoạt" }
+        ];
+
+        // --- 2. HÀM RENDER (VẼ) BẢNG ---
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = ''; // Xóa dữ liệu cũ
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">Không tìm thấy kết quả</td></tr>';
+                return;
+            }
+
+            data.forEach((acc, index) => {
+                // Tạo thẻ TR
+                const tr = document.createElement('tr');
+                tr.onclick = function() { selectRow(this); }; // Gán sự kiện click
+                
+                // Nội dung HTML của dòng (giữ nguyên cấu trúc input fake của bạn)
+                tr.innerHTML = `
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td><input type="text" class="fake-input" value="${acc.id}" readonly></td>
+                    <td><input type="text" class="fake-input" value="${acc.name}" readonly></td>
+                    <td><input type="text" class="fake-input" value="${acc.role}" readonly></td>
+                    <td><input type="text" class="fake-input" value="${acc.email}" readonly></td>
+                    <td><input type="text" class="fake-input" value="${acc.phone}" readonly></td>
+                    <td><input type="text" class="fake-input" value="${acc.status}" readonly style="color: ${acc.status === 'Đã kích hoạt' ? 'green' : 'red'}; font-weight: bold;"></td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- 3. CHỨC NĂNG TÌM KIẾM ---
+        function searchAccounts() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toUpperCase(); // Chuyển chữ về in hoa để tìm không phân biệt hoa thường
+
+            // Lọc dữ liệu từ mảng Mock Data
+            const filteredData = mockAccounts.filter(acc => {
+                return acc.name.toUpperCase().includes(filter) || 
+                       acc.id.toUpperCase().includes(filter) || 
+                       acc.phone.includes(filter);
+            });
+
+            // Vẽ lại bảng với dữ liệu đã lọc
+            renderTable(filteredData);
+        }
+
+        // --- CÁC HÀM CŨ CỦA BẠN (GIỮ NGUYÊN) ---
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+            document.querySelector('.toggle-btn').classList.toggle('moved');
+        }
+
+        function dangXuat() {
+            if(confirm('Bạn có chắc chắn muốn đăng xuất?')) window.location.href = 'login.html';
+        }
+
+        function selectRow(row) {
+            // Xóa class 'selected' cũ
+            let rows = document.querySelectorAll('#userTable tbody tr');
+            rows.forEach(r => r.classList.remove('selected'));
+            row.classList.add('selected');
+
+            // Lấy dữ liệu
+            let id = row.cells[1].querySelector('input').value;
+            let name = row.cells[2].querySelector('input').value;
+            let role = row.cells[3].querySelector('input').value;
+            let email = row.cells[4].querySelector('input').value;
+            let SDT = row.cells[5].querySelector('input').value;
+            let active = row.cells[6].querySelector('input').value;
+
+            // Đổ dữ liệu sang Form
+            document.getElementById('detail-id').value = id;
+            document.getElementById('detail-name').value = name;
+            document.getElementById('detail-role').value = role;
+            document.getElementById('detail-email').value = email;
+            document.getElementById('detail-SDT').value = SDT;
+            document.getElementById('detail-active').value = active;
+            
+            // Trigger đổi màu select box
+            changeColor(document.getElementById('detail-active'));
+
+            // Update Profile nhỏ
+            document.getElementById('display-name').innerText = name;
+            document.getElementById('display-id').innerText = "ID: " + id;
+        }
+        // 3. Hàm tải thông tin cán bộ
+        function loadUserProfile() {
+            document.getElementById('userName').innerText = currentUser.name;
+            document.getElementById('userCode').innerText = currentUser.code;
+        }
+
+
+        // Hàm đổi màu select box trạng thái (bổ sung thêm cho đẹp)
+        function changeColor(element) {
+            if (element.value == "Đã kích hoạt") {
+                element.style.color = "rgb(0, 251, 42)";
+            } else {
+                element.style.color = "red";
+            }
+            element.style.fontWeight = "bold";
+        }
+
+        // --- CHẠY LẦN ĐẦU KHI TẢI TRANG ---
+        window.onload = function() {
+            renderTable(mockAccounts);
+            // Set màu mặc định cho dropdown
+            changeColor(document.getElementById('detail-active'));
+            loadUserProfile() ;
+
+        };
+
+    </script>
+</body>
+</html>

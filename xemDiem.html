@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết quả học tập</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="test.css">
+    <style>
+        /* CSS bổ sung để highlight điểm */
+        .score-good { color: #1cc88a; font-weight: 800; } /* Điểm cao >= 8.0 */
+        .score-bad { color: #e74a3b; font-weight: 800; }  /* Điểm thấp < 5.0 */
+        .score-avg { color: #4e73df; font-weight: 800; }  /* Điểm trung bình */
+    </style>
+</head>
+<body>
+
+    <button id="toggleSidebar" class="toggle-btn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <aside id="sidebar" class="sidebar">
+            <div class="teacher-card">
+                <div class="avatar"></div>
+                <h3 id="userName">Đang tải...</h3> 
+                <p id="userCode">...</p>
+            </div>
+            <nav>
+                <button onclick="window.location.href='thong-tin.html'"><i class="fas fa-user"></i> <span>Thông tin cá nhân</span></button>
+                <button onclick="window.location.href='thoi-khoa-bieu.html'"><i class="fas fa-calendar-alt"></i> <span>Thời khóa biểu</span></button>
+                <button class="active" onclick="window.location.href='ket-qua-hoc-tap.html'"><i class="fas fa-chart-line"></i> <span>Kết quả học tập</span></button>
+                <button class="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span></button>
+            </nav>
+        </aside>
+
+        <main id="mainContent" class="content">
+            
+            <select class="semester-select" id="semesterSelect" onchange="loadData()">
+                <option value="hk1">📅 Học kì 1 - 2025/2026</option>
+                <option value="hk2">📅 Học kì 2 - 2025/2026</option>
+            </select>
+
+            <div class="card card-score">
+                
+                <div class="table-responsive">
+                    <table class="score-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%">MÔN HỌC</th>
+                                <th colspan="3">Hệ số 1 (Miệng/15p) <div class="header-bar"></div></th>
+                                <th colspan="2">Hệ số 2 (1 Tiết) <div class="header-bar"></div></th>
+                                <th>Hệ số 3 (Thi) <div class="header-bar"></div></th>
+                                <th>ĐTB <div class="header-bar" style="background: var(--primary-color)"></div></th>
+                            </tr>
+                        </thead>
+                        <tbody id="scoreTableBody">
+                            </tbody>
+                    </table>
+                </div>
+
+                <div class="score-footer">
+                    <div class="score-summary-item">
+                        <span>Điểm trung bình</span>
+                        <input type="text" class="score-input avg-input" id="finalAvg" value="..." readonly>
+                    </div>
+                    <div class="score-summary-item">
+                        <span>Hạnh kiểm</span>
+                        <span style="color: #1cc88a; font-weight: bold;">Tốt</span>
+                    </div>
+                    <div class="score-summary-item">
+                        <span>Xếp loại</span>
+                        <span id="finalRank" style="font-weight: bold;">...</span>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+
+        // 1. MOCK DATA: THÔNG TIN CÁN BỘ
+        const currentUser = {
+            name: "Nguyễn Văn Ho",
+            code: "MSCB: 456789123JKQ"
+        };
+        // 1. MOCK DATA: Điểm số các môn
+        // hs1: mảng tối đa 3 điểm, hs2: mảng tối đa 2 điểm, hs3: 1 điểm thi
+        const mockGrades = {
+            "hk1": [
+                { name: "Toán", icon: "fa-calculator", color: "#4e73df", hs1: [8.5, 9.0, null], hs2: [8.0, 8.5], hs3: 9.0 },
+                { name: "Vật Lí", icon: "fa-atom", color: "#f6c23e", hs1: [4.5, 5.0, 6.0], hs2: [6.0, 5.5], hs3: 5.0 },
+                { name: "Hóa Học", icon: "fa-flask", color: "#1cc88a", hs1: [9.0, 9.5, null], hs2: [8.5, 9.0], hs3: 9.5 },
+                { name: "Sinh Học", icon: "fa-dna", color: "#20c9a6", hs1: [7.0, 7.5, null], hs2: [7.0, null], hs3: 7.5 },
+                { name: "Ngữ Văn", icon: "fa-book", color: "#e74a3b", hs1: [7.0, 7.5, 8.0], hs2: [7.5, 7.0], hs3: 7.0 },
+                { name: "Lịch Sử", icon: "fa-landmark", color: "#858796", hs1: [8.0, 8.0, null], hs2: [8.5, null], hs3: 8.0 },
+                { name: "Địa Lí", icon: "fa-globe-americas", color: "#36b9cc", hs1: [9.0, null, null], hs2: [8.5, null], hs3: 9.0 },
+                { name: "Tiếng Anh", icon: "fa-language", color: "#4e73df", hs1: [9.0, 8.5, 9.0], hs2: [9.0, 8.5], hs3: 8.8 },
+                { name: "Tin Học", icon: "fa-desktop", color: "#5a5c69", hs1: [10, null, null], hs2: [9.5, null], hs3: 9.0 },
+                { name: "GDQP", icon: "fa-shield-alt", color: "#1cc88a", hs1: [8.0, null, null], hs2: [null, null], hs3: null }, // Môn chưa có đủ điểm
+                { name: "Thể Chất", icon: "fa-running", color: "#fd7e14", hs1: [9.0, null, null], hs2: [null, null], hs3: null }
+            ],
+            "hk2": [ // Dữ liệu giả cho học kỳ 2 (để test dropdown)
+                { name: "Toán", icon: "fa-calculator", color: "#4e73df", hs1: [6.0, null, null], hs2: [null, null], hs3: null },
+                { name: "Ngữ Văn", icon: "fa-book", color: "#e74a3b", hs1: [7.5, null, null], hs2: [null, null], hs3: null }
+            ]
+        };
+
+        // 2. Hàm tính điểm trung bình môn
+        function calculateSubjectAvg(subject) {
+            let totalScore = 0;
+            let totalCoeff = 0;
+
+            // Cộng điểm hệ số 1
+            subject.hs1.forEach(s => { 
+                if(s !== null) { totalScore += s * 1; totalCoeff += 1; }
+            });
+            // Cộng điểm hệ số 2
+            subject.hs2.forEach(s => { 
+                if(s !== null) { totalScore += s * 2; totalCoeff += 2; }
+            });
+            // Cộng điểm hệ số 3 (Thi)
+            if(subject.hs3 !== null) {
+                totalScore += subject.hs3 * 3; 
+                totalCoeff += 3;
+            }
+
+            if(totalCoeff === 0) return null;
+            return (totalScore / totalCoeff).toFixed(1);
+        }
+
+        // 3. Hàm Render Bảng
+        function loadData() {
+            const semester = document.getElementById('semesterSelect').value;
+            const data = mockGrades[semester];
+            const tbody = document.getElementById('scoreTableBody');
+            
+            tbody.innerHTML = '';
+            let sumAvg = 0;
+            let countSubjects = 0;
+
+            data.forEach(sub => {
+                // Tính ĐTB môn
+                const avg = calculateSubjectAvg(sub);
+                
+                // Nếu môn có điểm TB thì cộng vào tổng để tính phẩy cuối kỳ
+                if(avg !== null) {
+                    sumAvg += parseFloat(avg);
+                    countSubjects++;
+                }
+
+                // Tạo dòng HTML
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><i class="fas ${sub.icon}" style="color: ${sub.color}; width: 20px;"></i> ${sub.name}</td>
+                    ${createInputCell(sub.hs1[0])}
+                    ${createInputCell(sub.hs1[1])}
+                    ${createInputCell(sub.hs1[2])}
+                    ${createInputCell(sub.hs2[0])}
+                    ${createInputCell(sub.hs2[1])}
+                    ${createInputCell(sub.hs3)}
+                    <td><input type="text" class="score-input score-avg" value="${avg || ''}" readonly></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // 4. Tính tổng kết học kỳ
+            const finalAvgElement = document.getElementById('finalAvg');
+            const finalRankElement = document.getElementById('finalRank');
+
+            if(countSubjects > 0) {
+                const finalScore = (sumAvg / countSubjects).toFixed(1);
+                finalAvgElement.value = finalScore;
+                
+                // Xếp loại
+                let rank = "Yếu";
+                let rankColor = "#e74a3b"; // Đỏ
+                
+                if (finalScore >= 8.0) { rank = "Giỏi"; rankColor = "#1cc88a"; }
+                else if (finalScore >= 6.5) { rank = "Khá"; rankColor = "#4e73df"; }
+                else if (finalScore >= 5.0) { rank = "Trung Bình"; rankColor = "#f6c23e"; }
+
+                finalRankElement.innerText = rank;
+                finalRankElement.style.color = rankColor;
+            } else {
+                finalAvgElement.value = "...";
+                finalRankElement.innerText = "...";
+            }
+        }
+
+        // Helper: Tạo ô input và tô màu
+        function createInputCell(score) {
+            let cls = "score-input";
+            if(score !== null) {
+                if(score >= 8.0) cls += " score-good";
+                else if(score < 5.0) cls += " score-bad";
+            }
+            return `<td><input type="text" class="${cls}" value="${score !== null ? score : ''}" readonly></td>`;
+        }
+
+        // 3. Hàm tải thông tin cán bộ
+        function loadUserProfile() {
+            document.getElementById('userName').innerText = currentUser.name;
+            document.getElementById('userCode').innerText = currentUser.code;
+        }
+
+
+        // Sidebar Logic (Giữ nguyên từ code cũ của bạn)
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData(); // Load dữ liệu khi vào trang
+
+            const toggleBtn = document.getElementById('toggleSidebar');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            if (toggleBtn && sidebar) {
+                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                if (isCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContent.classList.add('expanded');
+                    toggleBtn.classList.add('moved');
+                    toggleBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                }
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+                    toggleBtn.classList.toggle('moved');
+                    if (sidebar.classList.contains('collapsed')) {
+                        toggleBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                        localStorage.setItem('sidebarCollapsed', 'true');
+                    } else {
+                        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                        localStorage.setItem('sidebarCollapsed', 'false');
+                    }
+                });
+            }
+        });
+
+         window.onload = function() {
+            loadUserProfile();
+        };
+
+    </script>
+</body>
+</html>

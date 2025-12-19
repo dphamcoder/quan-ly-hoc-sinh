@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trả Học Bạ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="test.css">
+    
+    <style>
+        /* Màu trạng thái động */
+        .text-success-bold { color: #1cc88a; font-weight: 800; }
+        .text-danger-bold { color: #e74a3b; font-weight: 800; }
+        .text-warning-bold { color: #f6c23e; font-weight: 800; }
+        
+        /* Con trỏ chuột khi hover vào dòng */
+        .student-row { cursor: pointer; transition: background 0.2s; }
+        .student-row:hover { background-color: #f8f9fc; }
+    </style>
+</head>
+<body class="admin-page">
+
+    <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+    <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <aside id="sidebar" class="sidebar">
+            <div class="teacher-card">
+                <div class="avatar"></div>
+                <h3 id="userName">Đang tải...</h3> 
+                <p id="userCode">...</p>
+            </div>
+
+            <nav>
+                <button onclick="window.location.href='#'"><i class="fas fa-users-cog"></i> <span>Quản lý tài khoản</span></button>
+                <button onclick="window.location.href='#'"><i class="fas fa-user-graduate"></i> <span>Quản lý học sinh</span></button>
+                <button onclick="window.location.href='phan_cong.html'"><i class="fas fa-chalkboard-teacher"></i> <span>Phân công giảng dạy</span></button>
+                <button onclick="window.location.href='xep_lop.html'"><i class="fas fa-layer-group"></i> <span>Xếp lớp</span></button>
+                <button onclick="window.location.href='xep_tkb.html'"><i class="fas fa-table"></i> <span>Xếp thời khóa biểu</span></button>
+                <button><i class="fas fa-chart-bar"></i> <span>Thống kê, báo cáo</span></button>
+                <button class="active" >
+                    <i class="fas fa-book"></i> <span>Trả học bạ</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main id="mainContent" class="content">
+            <div class="transcript-wrapper">
+                
+                <div class="transcript-list-col">
+                    <div class="transcript-toolbar">
+                        <select class="filter-select">
+                            <option>Chưa xét duyệt học bạ</option>
+                            <option>Đã xét duyệt</option>
+                        </select>
+                        <select class="filter-select">
+                            <option>Lớp 12A1</option>
+                            <option>Toàn trường</option>
+                        </select>
+                        <div class="search-input-group">
+                            <i class="fas fa-search" style="color: #888;"></i>
+                            <input type="text" id="searchInput" placeholder="Tìm kiếm tên hoặc mã HS..." onkeyup="searchTable()">
+                        </div>
+                    </div>
+
+                    <div class="table-scroll">
+                        <table class="placement-table transcript-table" id="studentTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">STT</th>
+                                    <th>Học Sinh</th>
+                                    <th class="th-highlight">Trạng thái</th>
+                                    <th class="th-highlight">Học bạ</th>
+                                    <th>Mã HS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="transcript-detail-col">
+                    <div class="student-card-large">
+                        <div class="large-avatar"></div>
+                        <h3 id="detailName">Vui lòng chọn học sinh</h3>
+                        <p id="detailId" style="font-weight: bold; color: #333;">...</p>
+                    </div>
+
+                    <div class="status-info">
+                        <div class="info-line">
+                            <span class="info-label">Trạng thái:</span>
+                            <span id="detailStatus">...</span>
+                        </div>
+                        <div class="info-line">
+                            <span class="info-label">Thông tin bị thiếu:</span>
+                            <span id="detailMissing">...</span>
+                        </div>
+                        <div class="info-line">
+                            <span class="info-label">Điều kiện:</span>
+                            <span id="detailCondition">...</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: auto;">
+                        <button id="btnReturn" class="btn-return" onclick="processReturn()" disabled style="opacity: 0.5; cursor: not-allowed;">Trả học bạ</button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+
+            // 1. MOCK DATA: THÔNG TIN CÁN BỘ
+        const currentUser = {
+            name: "Nguyễn Văn B",
+            code: "MSCB: 456789123JKQ"
+        };
+
+
+        // 1. MOCK DATA: Dữ liệu học sinh giả lập
+        const mockTranscriptData = [
+            {
+                id: "9999999999USD",
+                name: "Phạm Văn Thái Dương",
+                statusText: "Đã tốt nghiệp xuất sắc",
+                missingText: "Không",
+                conditionText: "Đủ điều kiện trả học bạ",
+                isQualified: true // Đủ điều kiện
+            },
+            {
+                id: "1234567890ABC",
+                name: "Nguyễn Doãn Hiếu",
+                statusText: "Chưa hoàn thành",
+                missingText: "Sổ đoàn, Ảnh 3x4",
+                conditionText: "Chưa đủ điều kiện",
+                isQualified: false // Thiếu hồ sơ
+            },
+            {
+                id: "8888888888XYZ",
+                name: "Hoàng Văn Hải",
+                statusText: "Đã tốt nghiệp",
+                missingText: "Không",
+                conditionText: "Đủ điều kiện trả học bạ",
+                isQualified: true
+            },
+            {
+                id: "7777777777LMN",
+                name: "Trần Nguyễn Anh Tài",
+                statusText: "Đã tốt nghiệp",
+                missingText: "Không",
+                conditionText: "Đủ điều kiện trả học bạ",
+                isQualified: true
+            },
+            {
+                id: "6666666666OPQ",
+                name: "Lê Ngọc Phúc",
+                statusText: "Chưa hoàn thành",
+                missingText: "Học phí kì 2",
+                conditionText: "Chưa đủ điều kiện",
+                isQualified: false
+            },
+            {
+                id: "5555555555RST",
+                name: "Nguyễn Văn Hoàng",
+                statusText: "Chưa hoàn thành",
+                missingText: "Giấy chứng nhận TN",
+                conditionText: "Chưa đủ điều kiện",
+                isQualified: false
+            },
+            {
+                id: "4444444444UVW",
+                name: "Nguyễn Đình Bình Minh",
+                statusText: "Đã tốt nghiệp",
+                missingText: "Không",
+                conditionText: "Đủ điều kiện trả học bạ",
+                isQualified: true
+            }
+        ];
+
+        // Biến lưu học sinh đang được chọn
+        let selectedStudent = null;
+
+        // 2. Hàm Render (Vẽ bảng)
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">Không tìm thấy học sinh</td></tr>';
+                return;
+            }
+
+            data.forEach((st, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'student-row';
+                
+                // Nếu dòng này đang được chọn thì thêm class 'selected'
+                if (selectedStudent && selectedStudent.id === st.id) {
+                    tr.classList.add('selected');
+                }
+
+                // Xử lý sự kiện click
+                tr.onclick = function() { selectStudent(st, tr); };
+
+                // Logic hiển thị Badge và Icon dựa trên isQualified
+                let badgeHTML = '';
+                let iconHTML = '';
+
+                if (st.isQualified) {
+                    badgeHTML = '<span class="status-badge status-active">Đã duyệt</span>';
+                    iconHTML = '<i class="fas fa-check" style="color: green;"></i>';
+                } else {
+                    // Tùy chỉnh text badge cho đa dạng
+                    let badgeText = st.missingText.includes("Học phí") ? "Nợ phí" : "Thiếu HS";
+                    badgeHTML = `<span class="status-badge status-inactive">${badgeText}</span>`;
+                    iconHTML = '<i class="fas fa-times" style="color: red;"></i>';
+                }
+
+                tr.innerHTML = `
+                    <td class="text-center">${index + 1}</td>
+                    <td>${st.name}</td>
+                    <td>${badgeHTML}</td>
+                    <td>${iconHTML}</td>
+                    <td>${st.id}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 3. Hàm Xử lý khi chọn học sinh
+        function selectStudent(student, rowElement) {
+            selectedStudent = student; // Lưu lại state
+
+            // Highlight dòng (UI)
+            document.querySelectorAll('.student-row').forEach(r => r.classList.remove('selected'));
+            if(rowElement) rowElement.classList.add('selected');
+
+            // Cập nhật thông tin chi tiết (Right Panel)
+            document.getElementById('detailName').innerText = "Học sinh : " + student.name;
+            document.getElementById('detailId').innerText = "MSHS : " + student.id;
+
+            const statusEl = document.getElementById('detailStatus');
+            const missingEl = document.getElementById('detailMissing');
+            const conditionEl = document.getElementById('detailCondition');
+            const btnEl = document.getElementById('btnReturn');
+
+            statusEl.innerText = student.statusText;
+            missingEl.innerText = student.missingText;
+            conditionEl.innerText = student.conditionText;
+
+            // Logic màu sắc và nút bấm
+            if (student.isQualified) {
+                statusEl.className = "text-success-bold";
+                missingEl.className = "text-success-bold";
+                conditionEl.className = "text-success-bold";
+                missingEl.style.color = "#1cc88a"; 
+                
+                btnEl.disabled = false;
+                btnEl.style.opacity = "1";
+                btnEl.style.cursor = "pointer";
+            } else {
+                statusEl.className = "text-warning-bold";
+                missingEl.className = "text-danger-bold";
+                conditionEl.className = "text-danger-bold";
+                
+                btnEl.disabled = true;
+                btnEl.style.opacity = "0.5";
+                btnEl.style.cursor = "not-allowed";
+            }
+        }
+
+        // 3. Hàm tải thông tin cán bộ
+        function loadUserProfile() {
+            document.getElementById('userName').innerText = currentUser.name;
+            document.getElementById('userCode').innerText = currentUser.code;
+        }
+
+
+
+        // 4. Hàm Tìm kiếm
+        function searchTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toUpperCase();
+
+            // Lọc dữ liệu từ mảng gốc
+            const filteredData = mockTranscriptData.filter(st => {
+                return st.name.toUpperCase().includes(filter) || 
+                       st.id.toUpperCase().includes(filter);
+            });
+
+            // Vẽ lại bảng
+            renderTable(filteredData);
+        }
+
+        // 5. Hàm Trả học bạ (Có thông báo Toast)
+        function processReturn() {
+            if (!selectedStudent) return;
+
+            if(confirm(`Xác nhận trả học bạ cho học sinh: ${selectedStudent.name}?`)) {
+                showToast(`Đã trả học bạ thành công cho ${selectedStudent.name}!`, 'success');
+            }
+        }
+
+        // 6. Hàm Toast Notification
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            toast.style.cssText = `
+                background: white; color: #333; padding: 15px 25px; margin-bottom: 10px;
+                border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                display: flex; align-items: center; gap: 10px; min-width: 300px;
+                border-left: 5px solid ${type === 'success' ? '#1cc88a' : '#e74a3b'};
+                animation: slideIn 0.3s ease forwards;
+            `;
+            
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}" 
+                   style="color: ${type === 'success' ? '#1cc88a' : '#e74a3b'}; font-size: 20px;"></i>
+                <span style="font-weight: bold;">${message}</span>
+            `;
+
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('toggleSidebar');
+            sidebar.classList.toggle('collapsed');
+            if (sidebar.classList.contains('collapsed')) toggleBtn.classList.add('moved');
+            else toggleBtn.classList.remove('moved');
+        }
+
+        // Style Animation cho Toast
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`;
+        document.head.appendChild(styleSheet);
+
+        // --- KHỞI TẠO ---
+        window.onload = function() {
+            renderTable(mockTranscriptData);
+            // Chọn mặc định học sinh đầu tiên để giao diện không bị trống
+            if (mockTranscriptData.length > 0) {
+                const firstRow = document.querySelector('.student-row');
+                selectStudent(mockTranscriptData[0], firstRow);
+            }
+
+            loadUserProfile();
+        };
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xếp Thời Khóa Biểu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="test.css">
+</head>
+<body class="admin-page"> 
+    <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <aside id="sidebar" class="sidebar">
+            <div class="teacher-card">
+                <div class="avatar"></div>
+                <h3 id="userName">Đang tải...</h3> 
+                <p id="userCode">...</p>
+            </div>
+
+            <nav>
+                <button onclick="window.location.href='#'">
+                    <i class="fas fa-users-cog"></i> <span>Quản lý tài khoản</span>
+                </button>
+                <button onclick="window.location.href='#'">
+                    <i class="fas fa-user-graduate"></i> <span>Quản lý học sinh</span>
+                </button>
+                <button style=" font-weight: bold;">
+                    <i class="fas fa-chalkboard-teacher"></i> <span>Phân công giảng dạy</span>
+                </button>
+                <button>
+                    <i class="fas fa-calendar-alt"></i> <span>Xếp lớp</span>
+                </button>
+                <button class="active">
+                    <i class="fas fa-table"></i> <span>Xếp thời khóa biểu</span>
+                </button>
+                <button>
+                    <i class="fas fa-chart-bar"></i> <span>Thống kê, báo cáo</span>
+                </button>
+                <button>
+                    <i class="fas fa-book"></i> <span>Trả học bạ</span>
+                </button>
+                
+            </nav>
+        </aside>
+
+        <main id="mainContent" class="content">
+            
+            <div class="editor-header">
+                <h2><i class="fas fa-edit"></i> Xếp Thời Khóa Biểu</h2>
+                <div class="editor-controls">
+                    <select class="form-control" style="width: 150px;">
+                        <option>Khối 10</option>
+                        <option>Khối 11</option>
+                        <option>Khối 12</option>
+                    </select>
+                    <select class="form-control" style="width: 150px; font-weight: bold; color: var(--primary-color);">
+                        <option>Lớp 12A1</option>
+                        <option>Lớp 12A2</option>
+                        <option>Lớp 12A3</option>
+                    </select>
+                    <button class="btn btn-primary"><i class="fas fa-save"></i> Lưu TKB</button>
+                </div>
+            </div>
+
+            <div class="editor-layout">
+                
+                <div class="timetable-wrapper card">
+                    <div class="table-responsive">
+                        <table class="custom-table timetable editor-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">Tiết</th>
+                                    <th>Thứ 2</th>
+                                    <th>Thứ 3</th>
+                                    <th>Thứ 4</th>
+                                    <th>Thứ 5</th>
+                                    <th>Thứ 6</th>
+                                    <th>Thứ 7</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="session-label"><td colspan="7">Buổi Sáng</td></tr>
+                                <tr><td>1</td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td></tr>
+                                <tr><td>2</td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td></tr>
+                                <tr><td>3</td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td></tr>
+                                <tr><td>4</td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td></tr>
+                               
+                                <tr class="session-label"><td colspan="7">Buổi Chiều</td></tr>
+                                <tr><td>5</td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td></tr>
+                                 <tr><td>6</td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td></tr>
+                                 <tr><td>7</td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td></tr>
+                                 <tr><td>8</td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td><td class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></td></tr>
+                                
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="subjects-palette card">
+                    <h4><i class="fas fa-cubes"></i> Kho môn học</h4>
+                    <p class="hint-text">Kéo môn học thả vào bảng</p>
+                    
+                    <div class="subject-list">
+                        <div class="draggable-subject math" draggable="true" ondragstart="drag(event)" data-name="Toán">Toán (Đại/Hình)</div>
+                        <div class="draggable-subject lit" draggable="true" ondragstart="drag(event)" data-name="Ngữ Văn">Ngữ Văn</div>
+                        <div class="draggable-subject eng" draggable="true" ondragstart="drag(event)" data-name="Tiếng Anh">Tiếng Anh</div>
+                        <div class="draggable-subject phys" draggable="true" ondragstart="drag(event)" data-name="Vật Lý">Vật Lý</div>
+                        <div class="draggable-subject chem" draggable="true" ondragstart="drag(event)" data-name="Hóa Học">Hóa Học</div>
+                        <div class="draggable-subject bio" draggable="true" ondragstart="drag(event)" data-name="Sinh Học">Sinh Học</div>
+                        <div class="draggable-subject hist" draggable="true" ondragstart="drag(event)" data-name="Lịch Sử">Lịch Sử</div>
+                        <div class="draggable-subject geo" draggable="true" ondragstart="drag(event)" data-name="Địa Lý">Địa Lý</div>
+                        <div class="draggable-subject gdcd" draggable="true" ondragstart="drag(event)" data-name="GDCD">GDCD</div>
+                        <div class="draggable-subject tech" draggable="true" ondragstart="drag(event)" data-name="Tin Học">Tin Học</div>
+                        <div class="draggable-subject pe" draggable="true" ondragstart="drag(event)" data-name="Thể Dục">Thể Dục</div>
+                        <div class="draggable-subject shcn" draggable="true" ondragstart="drag(event)" data-name="SHCN">SHCN</div>
+                        <div class="draggable-subject empty" draggable="true" ondragstart="drag(event)" data-name="">(Xóa tiết)</div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+   <script>
+        // 1. MOCK DATA: THÔNG TIN CÁN BỘ
+        const currentUser = {
+            name: "Nguyễn Văn B",
+            code: "MSCB: 456789123JKQ"
+        };
+
+        // 2. MOCK DATA: Dữ liệu thời khóa biểu giả lập
+        const mockSchedule = [
+            // --- THỨ 2 ---
+            { dayIndex: 1, period: 1, name: "Chào cờ", type: "shcn" },
+            { dayIndex: 1, period: 2, name: "Toán", type: "math" },
+            { dayIndex: 1, period: 3, name: "Toán", type: "math" },
+            { dayIndex: 1, period: 4, name: "Vật Lý", type: "phys" },
+            { dayIndex: 1, period: 5, name: "Hóa Học", type: "chem" },
+            
+            // --- THỨ 3 ---
+            { dayIndex: 2, period: 1, name: "Ngữ Văn", type: "lit" },
+            { dayIndex: 2, period: 2, name: "Ngữ Văn", type: "lit" },
+            { dayIndex: 2, period: 3, name: "Tiếng Anh", type: "eng" },
+            { dayIndex: 2, period: 4, name: "Tin Học", type: "tech" },
+            { dayIndex: 2, period: 5, name: "Tin Học", type: "tech" },
+
+            // --- THỨ 4 ---
+            { dayIndex: 3, period: 1, name: "Sinh Học", type: "bio" },
+            { dayIndex: 3, period: 2, name: "Lịch Sử", type: "hist" },
+            { dayIndex: 3, period: 3, name: "Địa Lý", type: "geo" },
+            { dayIndex: 3, period: 4, name: "GDCD", type: "gdcd" },
+            { dayIndex: 3, period: 5, name: "Thể Dục", type: "pe" },
+
+            // --- THỨ 5 ---
+            { dayIndex: 4, period: 1, name: "Toán", type: "math" },
+            { dayIndex: 4, period: 2, name: "Toán", type: "math" },
+            { dayIndex: 4, period: 3, name: "Hóa Học", type: "chem" },
+            { dayIndex: 4, period: 4, name: "Vật Lý", type: "phys" },
+            
+            // --- THỨ 6 ---
+            { dayIndex: 5, period: 1, name: "Tiếng Anh", type: "eng" },
+            { dayIndex: 5, period: 2, name: "Tiếng Anh", type: "eng" },
+            { dayIndex: 5, period: 3, name: "Ngữ Văn", type: "lit" },
+            { dayIndex: 5, period: 4, name: "Sinh Học", type: "bio" },
+            { dayIndex: 5, period: 5, name: "SHCN", type: "shcn" },
+
+            // --- CHIỀU THỨ 4 (Ví dụ học chiều) ---
+            { dayIndex: 3, period: 6, name: "Toán (TC)", type: "math" },
+            { dayIndex: 3, period: 7, name: "Toán (TC)", type: "math" },
+            { dayIndex: 3, period: 8, name: "Lý (TC)", type: "phys" }
+        ];
+
+        // 3. Hàm tải thông tin cán bộ
+        function loadUserProfile() {
+            document.getElementById('userName').innerText = currentUser.name;
+            document.getElementById('userCode').innerText = currentUser.code;
+        }
+
+        // 4. Hàm tải Mock Data vào bảng TKB
+        function loadMockData() {
+            const rows = document.querySelectorAll('.editor-table tbody tr');
+
+            rows.forEach(row => {
+                const firstCell = row.cells[0];
+                const periodText = firstCell.innerText.trim();
+                
+                if (!isNaN(periodText) && periodText !== "") {
+                    const currentPeriod = parseInt(periodText);
+                    const subjectsInPeriod = mockSchedule.filter(s => s.period === currentPeriod);
+
+                    subjectsInPeriod.forEach(subj => {
+                        if (row.cells[subj.dayIndex]) {
+                            const cell = row.cells[subj.dayIndex];
+                            cell.innerHTML = `
+                                <div class="cell-content ${subj.type}">
+                                    ${subj.name} 
+                                    <i class="fas fa-times remove-btn" onclick="clearCell(this)"></i>
+                                </div>
+                            `;
+                            cell.classList.add('filled');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Các hàm xử lý giao diện cũ
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.getAttribute('data-name'));
+            ev.dataTransfer.setData("class", ev.target.className);
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            var originalClass = ev.dataTransfer.getData("class");
+            
+            if (ev.target.classList.contains('drop-zone')) {
+                if (data === "") { 
+                    ev.target.innerHTML = "";
+                    ev.target.classList.remove('filled');
+                } else {
+                    var colorClass = originalClass.replace("draggable-subject", "").trim();
+                    ev.target.innerHTML = `<div class="cell-content ${colorClass}">${data} <i class="fas fa-times remove-btn" onclick="clearCell(this)"></i></div>`;
+                    ev.target.classList.add('filled');
+                }
+            }
+        }
+
+        function clearCell(icon) {
+            var cell = icon.closest('.drop-zone');
+            cell.innerHTML = "";
+            cell.classList.remove('filled');
+        }
+
+        // CHẠY KHI TẢI TRANG
+        window.onload = function() {
+            loadUserProfile(); // Tải thông tin cán bộ
+            loadMockData();    // Tải thời khóa biểu
+        };
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Học Sinh</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="test.css">
+    <style>
+        /* Tinh chỉnh CSS riêng cho bảng nhiều cột */
+        .admin-table th, .admin-table td {
+            white-space: nowrap; /* Giữ nội dung trên 1 dòng để bảng không bị vỡ */
+            padding: 10px;
+            font-size: 13px;
+        }
+        
+        /* Form nhập liệu chia cột gọn gàng */
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .form-col {
+            flex: 1;
+        }
+        .admin-form label {
+            margin-bottom: 5px;
+            display: block;
+            color: #555;
+        }
+        
+        /* Highlight dòng đang chọn */
+        .admin-table tbody tr.selected {
+            background-color: #e0f7fa !important;
+        }
+    </style>
+</head>
+<body class="admin-page">
+
+    <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <aside id="sidebar" class="sidebar">
+            <div class="teacher-card">
+                <div class="avatar"></div>
+                <h3 id="userName">Đang tải...</h3> 
+                <p id="userCode">...</p>
+            </div>
+
+            <nav>
+                <button><i class="fas fa-users-cog"></i> <span>Quản lý tài khoản</span></button>
+                <button class="active"><i class="fas fa-user-graduate"></i> <span>Quản lý học sinh</span></button>
+                <button><i class="fas fa-chalkboard-teacher"></i> <span>Phân công giảng dạy</span></button>
+                <button><i class="fas fa-layer-group"></i> <span>Xếp lớp</span></button>
+                <button><i class="fas fa-calendar-alt"></i> <span>Thời khóa biểu</span></button>
+                <button><i class="fas fa-chart-pie"></i> <span>Thống kê báo cáo</span></button>
+                <button class="logout-btn" onclick="dangXuat()"><i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span></button>
+            </nav>
+        </aside>
+
+        <main id="mainContent" class="content">
+            <div class="admin-wrapper">
+                
+                <div class="admin-main-col card">
+                    <div class="admin-header">
+                        <h2><i class="fas fa-list"></i> DANH SÁCH HỌC SINH</h2>
+                        <div class="search-box">
+                            <i class="fas fa-search" style="color: #888; margin-right: 10px;"></i>
+                            <input type="text" id="searchInput" placeholder="Tìm tên, mã HS..." onkeyup="searchStudent()">
+                        </div>
+                    </div>
+
+                    <div class="admin-table-container">
+                        <table class="admin-table" id="studentTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;">STT</th>
+                                    <th>Mã Học Sinh</th>
+                                    <th>Họ và Tên</th>
+                                    <th>Giới tính</th>
+                                    <th>Lớp</th>
+                                    <th>Trạng thái</th>
+                                    <th>SĐT</th>
+                                    <th>Email</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Dân tộc</th>
+                                    <th>Tôn giáo</th>
+                                    <th>Họ tên Bố</th>
+                                    <th>Nghề Bố</th>
+                                    <th>Họ tên Mẹ</th>
+                                    <th>Nghề Mẹ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="admin-right-col card" style="width: 400px;"> <div class="mini-profile text-center">
+                        <div class="avatar mx-auto"></div>
+                        <h3 id="display-name">Chọn học sinh</h3>
+                        <p class="text-muted" style="font-size: 12px;" id="display-id">---</p>
+                    </div>
+
+                    <div class="admin-form">
+                        <div class="form-row">
+                            <div class="form-col">
+                                <label>Mã học sinh (10 số)</label>
+                                <input type="text" class="form-control" id="detail-code">
+                            </div>
+                            <div class="form-col">
+                                <label>Lớp hiện tại</label>
+                                <select class="form-control" id="detail-class">
+                                    <option value="12A1">12A1</option>
+                                    <option value="12A2">12A2</option>
+                                    <option value="11B1">11B1</option>
+                                    <option value="10C1">10C1</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Họ và Tên</label>
+                            <input type="text" class="form-control" id="detail-name">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <label>Giới tính</label>
+                                <select class="form-control" id="detail-gender">
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                </select>
+                            </div>
+                            <div class="form-col">
+                                <label>Trạng thái</label>
+                                <select class="form-control" id="detail-status" onchange="updateStatusColor(this)">
+                                    <option value="Đang học">Đang học</option>
+                                    <option value="Đã nghỉ">Đã nghỉ</option>
+                                    <option value="Bảo lưu">Bảo lưu</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col"><label>Dân tộc</label><input type="text" class="form-control" id="detail-ethnicity"></div>
+                            <div class="form-col"><label>Tôn giáo</label><input type="text" class="form-control" id="detail-religion"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Địa chỉ</label>
+                            <input type="text" class="form-control" id="detail-address">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col"><label>Số điện thoại</label><input type="text" class="form-control" id="detail-phone"></div>
+                            <div class="form-col"><label>Email</label><input type="text" class="form-control" id="detail-email"></div>
+                        </div>
+
+                        <hr style="border-top: 1px dashed #ccc; margin: 15px 0;">
+
+                        <div class="form-group">
+                            <label>Họ tên Bố</label>
+                            <input type="text" class="form-control" id="detail-father">
+                        </div>
+                        <div class="form-group">
+                            <label>Nghề nghiệp Bố</label>
+                            <input type="text" class="form-control" id="detail-father-job">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Họ tên Mẹ</label>
+                            <input type="text" class="form-control" id="detail-mother">
+                        </div>
+                        <div class="form-group">
+                            <label>Nghề nghiệp Mẹ</label>
+                            <input type="text" class="form-control" id="detail-mother-job">
+                        </div>
+
+                        <div class="action-buttons">
+                            <div class="btn-row">
+                                <button class="btn btn-primary"><i class="fas fa-plus"></i> Thêm</button>
+                                <button class="btn btn-primary" style="background: #f6c23e; color: white;"><i class="fas fa-edit"></i> Sửa</button>
+                            </div>
+                            <button class="btn btn-danger full-width"><i class="fas fa-trash"></i> Xóa hồ sơ</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div> 
+        </main>
+    </div>
+
+    <script>
+
+            // 1. MOCK DATA: THÔNG TIN CÁN BỘ
+        const currentUser = {
+            name: "Nguyễn Văn B",
+            code: "MSCB: 456789123JKQ"
+        };
+
+        // 1. MOCK DATA: Danh sách học sinh mẫu
+        const mockStudents = [
+            {
+                code: "2023000001", name: "Nguyễn Văn A", gender: "Nam", class: "12A1", status: "Đang học",
+                address: "Số 1, Đường Láng, Hà Nội", phone: "0912345678", email: "nguyenvana@gmail.com",
+                ethnicity: "Kinh", religion: "Không",
+                father: "Nguyễn Văn X", fJob: "Kỹ sư",
+                mother: "Trần Thị Y", mJob: "Giáo viên"
+            },
+            {
+                code: "2023000002", name: "Trần Thị B", gender: "Nữ", class: "12A2", status: "Đang học",
+                address: "Số 5, Cầu Giấy, Hà Nội", phone: "0987654321", email: "tranthib@gmail.com",
+                ethnicity: "Kinh", religion: "Phật giáo",
+                father: "Trần Văn Z", fJob: "Bác sĩ",
+                mother: "Lê Thị M", mJob: "Kế toán"
+            },
+            {
+                code: "2023000003", name: "Lê Văn C", gender: "Nam", class: "11B1", status: "Đã nghỉ",
+                address: "Hà Đông, Hà Nội", phone: "0909090909", email: "levanc@gmail.com",
+                ethnicity: "Tày", religion: "Không",
+                father: "Lê Văn K", fJob: "Nông dân",
+                mother: "Phạm Thị H", mJob: "Nội trợ"
+            },
+            {
+                code: "2023000004", name: "Phạm Thị D", gender: "Nữ", class: "10C1", status: "Bảo lưu",
+                address: "Thanh Xuân, Hà Nội", phone: "0911223344", email: "phamd@gmail.com",
+                ethnicity: "Kinh", religion: "Thiên chúa",
+                father: "Phạm Văn T", fJob: "Kinh doanh",
+                mother: "Vũ Thị L", mJob: "Kinh doanh"
+            }
+        ];
+
+        // 2. Hàm Render bảng
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            data.forEach((st, index) => {
+                const tr = document.createElement('tr');
+                tr.onclick = function() { selectStudent(index); }; // Gán sự kiện click
+
+                // Tạo màu cho trạng thái
+                let statusColor = 'green';
+                if(st.status === 'Đã nghỉ') statusColor = 'red';
+                if(st.status === 'Bảo lưu') statusColor = 'orange';
+
+                tr.innerHTML = `
+                    <td class="text-center">${index + 1}</td>
+                    <td><strong>${st.code}</strong></td>
+                    <td>${st.name}</td>
+                    <td>${st.gender}</td>
+                    <td>${st.class}</td>
+                    <td><span style="color:${statusColor}; font-weight:bold;">${st.status}</span></td>
+                    <td>${st.phone}</td>
+                    <td>${st.email}</td>
+                    <td>${st.address}</td>
+                    <td>${st.ethnicity}</td>
+                    <td>${st.religion}</td>
+                    <td>${st.father}</td>
+                    <td>${st.fJob}</td>
+                    <td>${st.mother}</td>
+                    <td>${st.mJob}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 3. Hàm chọn học sinh -> Đổ dữ liệu vào Form
+        function selectStudent(index) {
+            // Highlight dòng được chọn
+            let rows = document.querySelectorAll('#tableBody tr');
+            rows.forEach(r => r.classList.remove('selected'));
+            rows[index].classList.add('selected');
+
+            const st = mockStudents[index];
+
+            // Đổ dữ liệu vào input
+            document.getElementById('detail-code').value = st.code;
+            document.getElementById('detail-name').value = st.name;
+            document.getElementById('detail-class').value = st.class;
+            document.getElementById('detail-gender').value = st.gender;
+            document.getElementById('detail-status').value = st.status;
+            document.getElementById('detail-address').value = st.address;
+            document.getElementById('detail-phone').value = st.phone;
+            document.getElementById('detail-email').value = st.email;
+            document.getElementById('detail-ethnicity').value = st.ethnicity;
+            document.getElementById('detail-religion').value = st.religion;
+            document.getElementById('detail-father').value = st.father;
+            document.getElementById('detail-father-job').value = st.fJob;
+            document.getElementById('detail-mother').value = st.mother;
+            document.getElementById('detail-mother-job').value = st.mJob;
+
+            // Cập nhật Profile nhỏ
+            document.getElementById('display-name').innerText = st.name;
+            document.getElementById('display-id').innerText = "Mã HS: " + st.code;
+
+            // Cập nhật màu dropdown status
+            updateStatusColor(document.getElementById('detail-status'));
+        }
+
+        // 4. Tìm kiếm
+        function searchStudent() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = mockStudents.filter(st => 
+                st.name.toLowerCase().includes(keyword) || 
+                st.code.includes(keyword)
+            );
+            // Render lại bảng với dữ liệu đã lọc nhưng giữ nguyên index gốc để click đúng
+            // Cách đơn giản nhất cho mock data là render lại filtered, nhưng lưu ý onclick index sẽ bị lệch.
+            // Để fix nhanh: ta gán trực tiếp object vào function onclick thay vì index
+            
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            filtered.forEach((st) => {
+                // Tìm index gốc trong mảng gốc để highlight đúng (nếu cần)
+                const originalIndex = mockStudents.indexOf(st);
+                
+                const tr = document.createElement('tr');
+                tr.onclick = function() { selectStudent(originalIndex); };
+
+                let statusColor = 'green';
+                if(st.status === 'Đã nghỉ') statusColor = 'red';
+                if(st.status === 'Bảo lưu') statusColor = 'orange';
+
+                tr.innerHTML = `
+                    <td class="text-center">${originalIndex + 1}</td>
+                    <td><strong>${st.code}</strong></td>
+                    <td>${st.name}</td>
+                    <td>${st.gender}</td>
+                    <td>${st.class}</td>
+                    <td><span style="color:${statusColor}; font-weight:bold;">${st.status}</span></td>
+                    <td>${st.phone}</td>
+                    <td>${st.email}</td>
+                    <td>${st.address}</td>
+                    <td>${st.ethnicity}</td>
+                    <td>${st.religion}</td>
+                    <td>${st.father}</td>
+                    <td>${st.fJob}</td>
+                    <td>${st.mother}</td>
+                    <td>${st.mJob}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 3. Hàm tải thông tin cán bộ
+        function loadUserProfile() {
+            document.getElementById('userName').innerText = currentUser.name;
+            document.getElementById('userCode').innerText = currentUser.code;
+        }
+
+
+        // Helper: Toggle Sidebar
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+            document.querySelector('.toggle-btn').classList.toggle('moved');
+        }
+
+        // Helper: Màu Status
+        function updateStatusColor(select) {
+            if(select.value === 'Đang học') select.style.color = '#1cc88a';
+            else if(select.value === 'Đã nghỉ') select.style.color = '#e74a3b';
+            else select.style.color = '#f6c23e';
+            select.style.fontWeight = 'bold';
+        }
+
+        // Chạy lần đầu
+        window.onload = function() {
+            renderTable(mockStudents);
+            updateStatusColor(document.getElementById('detail-status'));
+            loadUserProfile() 
+        };
+    </script>
+</body>
+</html>

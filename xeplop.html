@@ -7,53 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="test.css">
     <style>
-        /* CSS bổ sung cho phần chọn GVCN */
-        .gvcn-selector {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed #ccc;
-        }
-        .gvcn-selector label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-            color: #4e73df;
-        }
-        .form-select-custom {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #d1d3e2;
-            border-radius: 4px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        /* CSS MỚI: Select box trên Header (Thay cho Span cũ) */
-        .header-select {
-            border: none;
-            background: transparent;
-            font-size: 16px;
-            font-weight: 800; /* Chữ đậm */
-            color: #4e73df;   /* Màu xanh chủ đạo */
-            cursor: pointer;
-            outline: none;
-            padding: 5px;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
-        }
-        .header-select:hover {
-            border-bottom-color: #4e73df;
-        }
-        .header-select option {
-            color: #333;
-            font-weight: normal;
-        }
-
-        /* Highlight khi lớp đầy */
-        .full-class {
-            border-color: #e74a3b !important;
-            color: #e74a3b !important;
-        }
+        /* CSS bổ sung cho trang Xếp lớp */
+        .gvcn-selector { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #ccc; }
+        .gvcn-selector label { font-weight: bold; display: block; margin-bottom: 5px; color: #4e73df; }
+        .form-select-custom { width: 100%; padding: 8px; border: 1px solid #d1d3e2; border-radius: 4px; font-weight: 600; color: #333; }
+        .header-select { border: none; background: transparent; font-size: 16px; font-weight: 800; color: #4e73df; cursor: pointer; outline: none; padding: 5px; border-bottom: 2px solid transparent; transition: all 0.3s; }
+        .header-select:hover { border-bottom-color: #4e73df; }
+        .full-class { border-color: #e74a3b !important; color: #e74a3b !important; }
     </style>
 </head>
 <body class="admin-page">
@@ -66,23 +26,40 @@
 
     <div class="container">
         <aside id="sidebar" class="sidebar">
-        <div class="teacher-card">
+                  <div class="teacher-card">
                 <div class="avatar"></div>
                 <h3 id="userName">Đang tải...</h3> 
                 <p id="userCode">...</p>
             </div>
 
-
             <nav>
-                <button onclick="window.location.href='#'"><i class="fas fa-users-cog"></i> <span>Quản lý tài khoản</span></button>
-                <button onclick="window.location.href='#'"><i class="fas fa-user-graduate"></i> <span>Quản lý học sinh</span></button>
-                <button onclick="window.location.href='phan_cong.html'"><i class="fas fa-chalkboard-teacher"></i> <span>Phân công giảng dạy</span></button>
-                <button class="active" >
-                    <i class="fas fa-layer-group"></i> <span>Xếp lớp</span>
+                <button onclick="window.location.href='quanLyTaiKhoan.html'">
+                    <i class="fas fa-users-cog"></i> <span>Quản lý tài khoản</span>
                 </button>
-                <button onclick="window.location.href='xep_tkb.html'"><i class="fas fa-table"></i> <span>Xếp thời khóa biểu</span></button>
-                <button><i class="fas fa-chart-bar"></i> <span>Thống kê, báo cáo</span></button>
-                <button onclick="window.location.href='tra_hoc_ba.html'"><i class="fas fa-book"></i> <span>Trả học bạ</span></button>
+                <button onclick="window.location.href='quanLyHocSinh.html'">
+                    <i class="fas fa-user-graduate"></i> <span>Quản lý học sinh</span>
+                </button>
+                <button onclick="window.location.href='phanCongGiaoVien.html'">
+                    <i class="fas fa-chalkboard-teacher"></i> <span>Phân công giảng dạy</span>
+                </button>
+                <button class="active" onclick="window.location.href='xeplop.html'">
+                    <i class="fas fa-calendar-alt"></i> <span>Xếp lớp</span>
+                </button>
+                <button onclick="window.location.href='danhSachLop.html'">
+                    <i class="fas fa-calendar-alt"></i> <span>Xem danh sách lớp</span>
+                </button>
+                <button onclick="window.location.href='chinhSuaTKB.html'">
+                    <i class="fas fa-table"></i> <span>Xếp thời khóa biểu</span>
+                </button>
+                <button onclick="window.location.href='#'">
+                    <i class="fas fa-chart-bar"></i> <span>Thống kê, báo cáo</span>
+                </button>
+                <button onclick="window.location.href='traHocBa.html'">
+                    <i class="fas fa-book"></i> <span>Trả học bạ</span>
+                </button>
+                 <button class="logout-btn" onclick="dangXuat()">
+                    <i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span>
+                </button>
             </nav>
         </aside>
 
@@ -91,11 +68,8 @@
             <div class="placement-layout">
                 
                 <div class="left-section">
-                    
                     <div class="table-box">
-                        <div class="box-header">
-                            Danh sách học sinh khả dụng (<span id="countAvailable">0</span>)
-                        </div>
+                        <div class="box-header">Danh sách học sinh khả dụng (<span id="countAvailable">0</span>)</div>
                         <div class="table-scroll">
                             <table class="placement-table" id="availableTable">
                                 <thead>
@@ -107,16 +81,13 @@
                                         <th style="width: 90px;">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody id="availableBody">
-                                    </tbody>
+                                <tbody id="availableBody"></tbody>
                             </table>
                         </div>
                     </div>
 
                     <div class="table-box">
-                        <div class="box-header">
-                            Danh sách học sinh <span id="currentClassNameDisplay">...</span> (<span id="countAdded">0</span>)
-                        </div>
+                        <div class="box-header">Danh sách học sinh <span id="currentClassNameDisplay">...</span> (<span id="countAdded">0</span>)</div>
                         <div class="table-scroll">
                             <table class="placement-table" id="addedTable">
                                 <thead>
@@ -128,16 +99,13 @@
                                         <th style="width: 90px;">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody id="addedBody">
-                                    </tbody>
+                                <tbody id="addedBody"></tbody>
                             </table>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="right-section">
-                    
                     <div class="class-info">
                         <i class="fas fa-layer-group"></i> 
                         <span>
@@ -153,47 +121,29 @@
                         <label><i class="fas fa-user-tie"></i> GV Chủ Nhiệm:</label>
                         <select class="form-select-custom" id="gvcnSelect">
                             <option value="">-- Chọn GVCN --</option>
-                            </select>
+                        </select>
                     </div>
 
                     <div class="stat-group">
-                        <div class="stat-row">
-                            <span>Sĩ số dự kiến :</span>
-                            <input type="text" class="stat-input" value="40" readonly id="maxStudents">
-                        </div>
-                        <div class="stat-row">
-                            <span>Hiện tại:</span>
-                            <input type="text" class="stat-input" value="0" id="currentCount" readonly>
-                        </div>
-                        <div class="stat-row">
-                            <span style="color: #e74a3b;">Còn thiếu :</span>
-                            <input type="text" class="stat-input" value="40" id="missingCount" readonly style="color: #e74a3b; border-color: #e74a3b;">
-                        </div>
+                        <div class="stat-row"><span>Sĩ số dự kiến :</span><input type="text" class="stat-input" value="40" readonly id="maxStudents"></div>
+                        <div class="stat-row"><span>Hiện tại:</span><input type="text" class="stat-input" value="0" id="currentCount" readonly></div>
+                        <div class="stat-row"><span style="color: #e74a3b;">Còn thiếu :</span><input type="text" class="stat-input" value="40" id="missingCount" readonly style="color: #e74a3b; border-color: #e74a3b;"></div>
                     </div>
 
                     <div style="margin-top: auto;"></div>
-
                     <div class="control-buttons">
                         <button class="btn-control btn-cancel" onclick="resetData()">Hủy</button>
                         <button class="btn-control btn-save" onclick="saveClass()">Lưu</button>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
 
+    <script src="thongBao.js"></script>
+
     <script>
-
-        // 1. MOCK DATA: THÔNG TIN CÁN BỘ
-        const currentUser = {
-            name: "Nguyễn Văn B",
-            code: "MSCB: 456789123JKQ"
-        };
-
-        // 1. MOCK DATA PHỨC TẠP (CHO NHIỀU LỚP)
-        
-        // Data tổng hợp cho các lớp
+        // DATA
         const db = {
             "12A1": {
                 gvcn: "Nguyễn Đình Bình Minh",
@@ -210,9 +160,7 @@
             },
             "12A2": {
                 gvcn: "Trần Thị C",
-                added: [
-                    { id: 201, name: "Lê Văn Luyện", oldClass: "11B2", rank: "TB" }
-                ],
+                added: [{ id: 201, name: "Lê Văn Luyện", oldClass: "11B2", rank: "TB" }],
                 available: [
                     { id: 5, name: "Lê Ngọc Phúc", oldClass: "11B1", rank: "Khá" },
                     { id: 6, name: "Học sinh A", oldClass: "11C1", rank: "TB" },
@@ -230,71 +178,44 @@
             }
         };
 
-        // Danh sách Giáo viên
-        const listTeachers = [
-            "Nguyễn Đình Bình Minh", "Trần Thị C", "Trần Văn D", 
-            "Hoàng Thị H", "Phạm Văn Thái Dương", "Nguyễn Doãn Hiếu"
-        ];
-
-        // Biến toàn cục theo dõi trạng thái hiện tại
+        const listTeachers = ["Nguyễn Đình Bình Minh", "Trần Thị C", "Trần Văn D", "Hoàng Thị H", "Phạm Văn Thái Dương", "Nguyễn Doãn Hiếu"];
         let currentClassId = "12A1";
-        let currentData = db["12A1"]; // Con trỏ tham chiếu đến data của lớp hiện tại
+        let currentData = db["12A1"]; 
         const MAX_STUDENTS = 40;
 
-        // 2. HÀM KHỞI TẠO VÀ RENDER
-        
         function init() {
             renderTeachers();
-            changeClass(); // Load lớp mặc định
-            loadUserProfile();
+            changeClass();
+            // Gọi hàm từ thongBao.js để load thông tin người dùng
+            if(typeof loadUserProfile === 'function') loadUserProfile();
         }
 
-        // Sự kiện khi đổi Select Box
         function changeClass() {
             const select = document.getElementById('targetClassSelect');
             currentClassId = select.value;
-            currentData = db[currentClassId]; // Cập nhật con trỏ dữ liệu
-
-            // Cập nhật UI
+            currentData = db[currentClassId];
             document.getElementById('currentClassNameDisplay').innerText = select.options[select.selectedIndex].text;
             document.getElementById('gvcnSelect').value = currentData.gvcn;
-            
             renderTables();
         }
 
         function renderTables() {
             const availBody = document.getElementById('availableBody');
             const addedBody = document.getElementById('addedBody');
-
             availBody.innerHTML = '';
             addedBody.innerHTML = '';
 
-            // Render bảng Khả dụng (Lấy từ currentData.available)
             currentData.available.forEach((st, index) => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="text-center">${index + 1}</td>
-                    <td>${st.name}</td>
-                    <td><div class="fake-input">${st.oldClass}</div></td>
-                    <td><div class="fake-input">${st.rank}</div></td>
-                    <td><button class="btn-action-small btn-select" onclick="moveToAdded(${index})">Chọn</button></td>
-                `;
+                tr.innerHTML = `<td class="text-center">${index + 1}</td><td>${st.name}</td><td><div class="fake-input">${st.oldClass}</div></td><td><div class="fake-input">${st.rank}</div></td><td><button class="btn-action-small btn-select" onclick="moveToAdded(${index})">Chọn</button></td>`;
                 availBody.appendChild(tr);
             });
 
-            // Render bảng Đã thêm (Lấy từ currentData.added)
             currentData.added.forEach((st, index) => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="text-center">${index + 1}</td>
-                    <td>${st.name}</td>
-                    <td><div class="fake-input">${st.oldClass}</div></td>
-                    <td><div class="fake-input">${st.rank}</div></td>
-                    <td><button class="btn-action-small btn-deselect" onclick="moveToAvailable(${index})">Bỏ</button></td>
-                `;
+                tr.innerHTML = `<td class="text-center">${index + 1}</td><td>${st.name}</td><td><div class="fake-input">${st.oldClass}</div></td><td><div class="fake-input">${st.rank}</div></td><td><button class="btn-action-small btn-deselect" onclick="moveToAvailable(${index})">Bỏ</button></td>`;
                 addedBody.appendChild(tr);
             });
-
             updateStats();
         }
 
@@ -302,110 +223,61 @@
             const select = document.getElementById('gvcnSelect');
             listTeachers.forEach(t => {
                 const opt = document.createElement('option');
-                opt.value = t;
-                opt.innerText = t;
-                select.appendChild(opt);
+                opt.value = t; opt.innerText = t; select.appendChild(opt);
             });
         }
 
-        // 3. LOGIC DI CHUYỂN DỮ LIỆU (Thao tác trực tiếp trên currentData)
-
         function moveToAdded(index) {
             if (currentData.added.length >= MAX_STUDENTS) {
-                showToast("Lớp đã đủ sĩ số!", "error");
-                return;
+                // Sử dụng alert nếu showToast chưa sẵn sàng, hoặc showToast từ thongBao.js
+                alert("Lớp đã đủ sĩ số!"); return;
             }
-            // Cắt từ available -> push vào added
-            const student = currentData.available.splice(index, 1)[0];
-            currentData.added.push(student);
+            currentData.added.push(currentData.available.splice(index, 1)[0]);
             renderTables();
         }
 
         function moveToAvailable(index) {
-            // Cắt từ added -> push vào available
-            const student = currentData.added.splice(index, 1)[0];
-            currentData.available.push(student);
+            currentData.available.push(currentData.added.splice(index, 1)[0]);
             renderTables();
         }
 
         function updateStats() {
             const current = currentData.added.length;
-            const missing = MAX_STUDENTS - current;
-
             document.getElementById('countAvailable').innerText = currentData.available.length;
             document.getElementById('countAdded').innerText = current;
-            
             document.getElementById('currentCount').value = current;
             const missingInput = document.getElementById('missingCount');
-            
             if (current >= MAX_STUDENTS) {
-                missingInput.value = "ĐỦ";
-                missingInput.style.color = "green";
-                missingInput.style.borderColor = "green";
+                missingInput.value = "ĐỦ"; missingInput.style.color = "green";
             } else {
-                missingInput.value = missing;
-                missingInput.style.color = "#e74a3b";
-                missingInput.style.borderColor = "#e74a3b";
+                missingInput.value = MAX_STUDENTS - current; missingInput.style.color = "#e74a3b";
             }
         }
-        // 3. Hàm tải thông tin cán bộ
-        function loadUserProfile() {
-            document.getElementById('userName').innerText = currentUser.name;
-            document.getElementById('userCode').innerText = currentUser.code;
-        }
-
-        // 4. CÁC HÀM CHỨC NĂNG KHÁC
 
         function saveClass() {
             const gvcn = document.getElementById('gvcnSelect').value;
-            // Lưu GVCN vào DB ảo
-            currentData.gvcn = gvcn; 
-            
-            if(!gvcn) {
-                showToast("Vui lòng chọn GV Chủ nhiệm!", "warning");
-                return;
-            }
-            
-            showToast(`Đã lưu dữ liệu cho lớp ${currentClassId} thành công!`, "success");
+            currentData.gvcn = gvcn;
+            if(!gvcn) { alert("Vui lòng chọn GV Chủ nhiệm!"); return; }
+            alert(`Đã lưu dữ liệu cho lớp ${currentClassId} thành công!`);
         }
 
         function resetData() {
-            if(confirm("Hủy bỏ mọi thay đổi của lớp này?")) {
-                // Trong thực tế sẽ gọi API load lại, ở đây ta reload trang
-                location.reload();
+            if(confirm("Hủy bỏ mọi thay đổi của lớp này?")) location.reload();
+        }
+
+        // Hàm toggleSidebar (nếu thongBao.js chưa load kịp hoặc bị lỗi)
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('toggleSidebar');
+            sidebar.classList.toggle('collapsed');
+            if (sidebar.classList.contains('collapsed')) {
+                toggleBtn.classList.add('moved');
+            } else {
+                toggleBtn.classList.remove('moved');
             }
         }
 
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                background: white; color: #333; padding: 15px 25px; margin-bottom: 10px;
-                border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-                display: flex; align-items: center; gap: 10px; min-width: 300px;
-                border-left: 5px solid ${type === 'success' ? '#1cc88a' : (type === 'error' ? '#e74a3b' : '#f6c23e')};
-                animation: slideIn 0.3s ease forwards;
-            `;
-            let icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-            let color = type === 'success' ? '#1cc88a' : '#e74a3b';
-            toast.innerHTML = `<i class="fas ${icon}" style="color: ${color}; font-size: 20px;"></i><span style="font-weight: bold;">${message}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.remove(); }, 3000);
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-            document.querySelector('.toggle-btn').classList.toggle('moved');
-        }
-
-        const styleSheet = document.createElement("style");
-        styleSheet.innerText = `@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`;
-        document.head.appendChild(styleSheet);
-
-        // KHỞI CHẠY
         window.onload = init;
-
-
     </script>
 </body>
 </html>

@@ -1547,3 +1547,190 @@ nav button i {
     font-size: 15px; 
     min-width: 20px; /* Giảm chiều rộng vùng chứa icon */
 }
+
+/* =========================================
+   13. MODULE ĐÁNH GIÁ HẠNH KIỂM (CONDUCT EVALUATION)
+   ========================================= */
+
+/* Layout chia 2 cột (Giống trang Quản lý tài khoản) */
+.conduct-wrapper {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* CỘT TRÁI: DANH SÁCH */
+.conduct-list-col {
+    flex: 7; /* Chiếm 70% */
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    padding: 15px;
+    border: 1px solid #e3e6f0;
+}
+
+/* Thanh công cụ lọc (Năm học, Lớp) */
+.conduct-toolbar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f2f5;
+    align-items: center;
+}
+
+.conduct-filter-select {
+    padding: 8px 15px;
+    border: 1px solid #d1d3e2;
+    border-radius: 5px;
+    background-color: #f8f9fc;
+    color: #555;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+}
+
+/* Bảng danh sách */
+.conduct-table th {
+    background-color: #4e73df; /* Header màu xanh đậm chủ đạo */
+    color: white;
+    text-align: center;
+    padding: 12px;
+    font-weight: 600;
+}
+
+.conduct-table td {
+    padding: 10px;
+    vertical-align: middle;
+    border-bottom: 1px solid #e3e6f0;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+/* Hiệu ứng dòng được chọn */
+.conduct-table tr.selected {
+    background-color: #d1e7dd !important; /* Xanh ngọc nhạt */
+    border-left: 4px solid #198754;
+}
+.conduct-table tr.selected td {
+    font-weight: 700;
+    color: #0f5132;
+}
+
+/* Trạng thái hạnh kiểm trong bảng */
+.badge-rating {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}
+.rating-tot { background-color: #1cc88a; color: white; }
+.rating-kha { background-color: #36b9cc; color: white; }
+.rating-tb { background-color: #f6c23e; color: white; }
+.rating-yeu { background-color: #e74a3b; color: white; }
+.rating-none { background-color: #e3e6f0; color: #888; border: 1px dashed #aaa; }
+
+/* CỘT PHẢI: BẢNG ĐÁNH GIÁ */
+.conduct-detail-col {
+    flex: 3; /* Chiếm 30% */
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    border: 1px solid #e3e6f0;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    align-items: center;
+}
+
+/* Card thông tin học sinh */
+.student-profile-mini {
+    text-align: center;
+    margin-bottom: 25px;
+    width: 100%;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+}
+
+.student-profile-mini .avatar-xl {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-image: url('https://cdn-icons-png.flaticon.com/512/3135/3135715.png');
+    background-size: cover;
+    margin: 0 auto 15px;
+    border: 3px solid #4e73df;
+    padding: 2px;
+}
+
+/* Khu vực nút bấm đánh giá */
+.rating-buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    width: 100%;
+}
+
+.btn-rate {
+    padding: 12px;
+    border: 2px solid #e3e6f0;
+    background: white;
+    border-radius: 8px;
+    font-weight: 700;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-rate:hover {
+    background-color: #f8f9fc;
+    border-color: #ccc;
+}
+
+/* Khi nút được chọn (Active state) */
+.btn-rate.active {
+    border-color: transparent;
+    color: white;
+    transform: scale(1.02);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-rate.active.val-tot { background: #1cc88a; }
+.btn-rate.active.val-kha { background: #36b9cc; }
+.btn-rate.active.val-tb { background: #f6c23e; }
+.btn-rate.active.val-yeu { background: #e74a3b; }
+
+/* Icon check mark trong nút */
+.btn-rate .check-icon { display: none; }
+.btn-rate.active .check-icon { display: block; }
+
+/* Nút Lưu cuối cùng */
+.action-footer {
+    margin-top: auto;
+    width: 100%;
+    padding-top: 20px;
+}
+.btn-save-conduct {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(to right, #4e73df, #224abe);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(78, 115, 223, 0.3);
+}
+.btn-save-conduct:hover { opacity: 0.9; transform: translateY(-2px); }

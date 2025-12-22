@@ -50,13 +50,34 @@
             </div>
 
             <nav>
-                <button><i class="fas fa-users-cog"></i> <span>Quản lý tài khoản</span></button>
-                <button class="active"><i class="fas fa-user-graduate"></i> <span>Quản lý học sinh</span></button>
-                <button><i class="fas fa-chalkboard-teacher"></i> <span>Phân công giảng dạy</span></button>
-                <button><i class="fas fa-layer-group"></i> <span>Xếp lớp</span></button>
-                <button><i class="fas fa-calendar-alt"></i> <span>Thời khóa biểu</span></button>
-                <button><i class="fas fa-chart-pie"></i> <span>Thống kê báo cáo</span></button>
-                <button class="logout-btn" onclick="dangXuat()"><i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span></button>
+                <button onclick="window.location.href='quanLyTaiKhoan.html'">
+                    <i class="fas fa-users-cog"></i> <span>Quản lý tài khoản</span>
+                </button>
+                <button class="active" onclick="window.location.href='quanLyHocSinh.html'">
+                    <i class="fas fa-user-graduate"></i> <span>Quản lý học sinh</span>
+                </button>
+                <button  onclick="window.location.href='phanCongGiaoVien.html'">
+                    <i class="fas fa-chalkboard-teacher"></i> <span>Phân công giảng dạy</span>
+                </button>
+                <button  onclick="window.location.href='xeplop.html'">
+                    <i class="fas fa-calendar-alt"></i> <span>Xếp lớp</span>
+                </button>
+                <button onclick="window.location.href='danhSachLop.html'">
+                    <i class="fas fa-calendar-alt"></i> <span>Xem danh sách lớp</span>
+                </button>
+                <button  onclick="window.location.href='chinhSuaTKB.html'">
+                    <i class="fas fa-table"></i> <span>Xếp thời khóa biểu</span>
+                </button>
+                <button onclick="window.location.href='#'">
+                    <i class="fas fa-chart-bar"></i> <span>Thống kê, báo cáo</span>
+                </button>
+                <button onclick="window.location.href='traHocBa.html'">
+                    <i class="fas fa-book"></i> <span>Trả học bạ</span>
+                </button>
+                 <button class="logout-btn" onclick="dangXuat()">
+                    <i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span>
+                </button>
+                
             </nav>
         </aside>
 
@@ -194,13 +215,11 @@
         </main>
     </div>
 
+    <script src="thongBao.js"></script>
+
     <script>
 
-            // 1. MOCK DATA: THÔNG TIN CÁN BỘ
-        const currentUser = {
-            name: "Nguyễn Văn B",
-            code: "MSCB: 456789123JKQ"
-        };
+
 
         // 1. MOCK DATA: Danh sách học sinh mẫu
         const mockStudents = [

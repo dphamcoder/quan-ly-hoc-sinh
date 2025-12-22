@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đánh Giá Hạnh Kiểm</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="test.css">
+</head>
+<body class="admin-page">
+
+    <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+    <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        
+        <aside id="sidebar" class="sidebar">
+            <div class="teacher-card">
+                <div class="avatar"></div>
+                <h3 id="userName">Đang tải...</h3> 
+                <p id="userCode">...</p>
+            </div>
+
+            <nav>
+                <button onclick="window.location.href='danhSachLopGV.html'">
+                    <i class="fas fa-list-ol"></i> <span>Xem danh sách lớp</span>
+                </button>
+
+                <button onclick="window.location.href='nhapDiem.html'">
+                    <i class="fas fa-marker"></i> <span>Nhập điểm bộ môn</span>
+                </button>
+
+                <button class="active" onclick="window.location.href='danhGiaHanhKiem.html'">
+                    <i class="fas fa-user-check"></i> <span>Đánh giá hạnh kiểm</span>
+                </button>
+
+                <button onclick="window.location.href='tongHopKetQua.html'">
+                    <i class="fas fa-chart-line"></i> <span>Tổng hợp kết quả học tập</span>
+                </button>
+
+                <button onclick="window.location.href='xemtkbGV.html'">
+                    <i class="fas fa-calendar-alt"></i> <span>Xem thời khóa biểu</span>
+                </button>
+
+                <button class="logout-btn" onclick="dangXuat()">
+                    <i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main id="mainContent" class="content">
+            
+            <div class="conduct-wrapper">
+                
+                <div class="conduct-list-col">
+                    <div class="conduct-toolbar">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-calendar-check text-primary"></i>
+                            <select class="conduct-filter-select">
+                                <option>Năm học 2025 - 2026</option>
+                                <option>Năm học 2024 - 2025</option>
+                            </select>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-users text-primary"></i>
+                            <select class="conduct-filter-select">
+                                <option>Lớp 12A1</option>
+                                <option>Lớp 12A2</option>
+                            </select>
+                        </div>
+                        <div style="margin-left: auto; color: #4e73df; font-weight: bold; font-size: 18px;">
+                            QUẢN LÝ HẠNH KIỂM
+                        </div>
+                    </div>
+
+                    <div class="table-scroll">
+                        <table class="placement-table conduct-table" style="width: 100%;">
+                            <thead style="position: sticky; top: 0; z-index: 10;">
+                                <tr>
+                                    <th style="width: 50px;">STT</th>
+                                    <th style="text-align: left;">Họ và Tên Học Sinh</th>
+                                    <th style="width: 150px;">Hạnh Kiểm</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentTableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="conduct-detail-col">
+                    
+                    <div class="student-profile-mini">
+                        <div class="avatar-xl"></div>
+                        <h3 id="displayName" style="margin:0; color:#333;">Chọn học sinh</h3>
+                        <p id="displayId" style="color:#888; font-weight:600; margin-top:5px;">...</p>
+                    </div>
+
+                    <div class="rating-buttons-grid">
+                        <div class="btn-rate val-tot" onclick="rateStudent('Tốt')">
+                            <span><i class="fas fa-star me-2"></i> Tốt</span>
+                            <i class="fas fa-check-circle check-icon"></i>
+                        </div>
+                        <div class="btn-rate val-kha" onclick="rateStudent('Khá')">
+                            <span><i class="fas fa-thumbs-up me-2"></i> Khá</span>
+                            <i class="fas fa-check-circle check-icon"></i>
+                        </div>
+                        <div class="btn-rate val-tb" onclick="rateStudent('Trung Bình')">
+                            <span><i class="fas fa-minus me-2"></i> Trung Bình</span>
+                            <i class="fas fa-check-circle check-icon"></i>
+                        </div>
+                        <div class="btn-rate val-yeu" onclick="rateStudent('Yếu')">
+                            <span><i class="fas fa-exclamation-triangle me-2"></i> Yếu</span>
+                            <i class="fas fa-check-circle check-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="action-footer">
+                        <button class="btn-save-conduct" onclick="saveData()">
+                            <i class="fas fa-save me-2"></i> Lưu đánh giá
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script src="thongBao.js"></script>
+
+    <script>
+        // 1. MOCK DATA
+        const students = [
+            { id: "HS001", name: "Phạm Văn Thái Dương", rank: "Tốt" },
+            { id: "HS002", name: "Nguyễn Doãn Hiếu", rank: "Tốt" },
+            { id: "HS003", name: "Hoàng Văn Hải", rank: "Tốt" },
+            { id: "HS004", name: "Trần Nguyễn Anh Tài", rank: "Khá" },
+            { id: "HS005", name: "Lê Ngọc Phúc", rank: "Trung Bình" },
+            { id: "HS006", name: "Nguyễn Văn Hoàng", rank: "Tốt" },
+            { id: "HS007", name: "Nguyễn Đình Bình Minh", rank: "" }, // Chưa đánh giá
+            { id: "HS008", name: "Lê Văn Phúc", rank: "" },
+            { id: "HS009", name: "Nguyễn Đình Hiếu", rank: "" },
+            { id: "HS010", name: "Trần Văn A", rank: "" },
+            { id: "HS011", name: "Lê Thị B", rank: "" },    
+            { id: "HS001", name: "Phạm Văn Thái Dương", rank: "Tốt" },
+            { id: "HS002", name: "Nguyễn Doãn Hiếu", rank: "Tốt" },
+            { id: "HS003", name: "Hoàng Văn Hải", rank: "Tốt" },
+            { id: "HS004", name: "Trần Nguyễn Anh Tài", rank: "Khá" },
+            { id: "HS005", name: "Lê Ngọc Phúc", rank: "Trung Bình" },
+            { id: "HS006", name: "Nguyễn Văn Hoàng", rank: "Tốt" },
+            { id: "HS007", name: "Nguyễn Đình Bình Minh", rank: "" }, // Chưa đánh giá
+            { id: "HS008", name: "Lê Văn Phúc", rank: "" },
+            { id: "HS009", name: "Nguyễn Đình Hiếu", rank: "" },
+            { id: "HS010", name: "Trần Văn A", rank: "" },
+            { id: "HS011", name: "Lê Thị B", rank: "" }
+        ];
+
+        let selectedIndex = 6; // Mặc định chọn em số 7
+
+        // 2. KHỞI TẠO
+        function init() {
+            if(typeof loadUserProfile === 'function') loadUserProfile();
+            else {
+                document.getElementById('userName').innerText = "Nguyễn Văn B";
+                document.getElementById('userCode').innerText = "MSCB: 456789";
+            }
+            renderTable();
+            selectStudent(selectedIndex);
+        }
+
+        // 3. VẼ BẢNG
+        function renderTable() {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+
+            students.forEach((st, index) => {
+                const tr = document.createElement('tr');
+                if (index === selectedIndex) tr.classList.add('selected');
+                tr.onclick = () => selectStudent(index);
+
+                // Tạo badge hiển thị trạng thái
+                let badgeClass = "rating-none";
+                let badgeText = "Chưa đánh giá";
+
+                if(st.rank === "Tốt") { badgeClass = "rating-tot"; badgeText = "Tốt"; }
+                else if(st.rank === "Khá") { badgeClass = "rating-kha"; badgeText = "Khá"; }
+                else if(st.rank === "Trung Bình") { badgeClass = "rating-tb"; badgeText = "TB"; }
+                else if(st.rank === "Yếu") { badgeClass = "rating-yeu"; badgeText = "Yếu"; }
+
+                tr.innerHTML = `
+                    <td class="text-center">${index + 1}</td>
+                    <td style="font-weight: 500;">${st.name}</td>
+                    <td class="text-center"><span class="badge-rating ${badgeClass}">${badgeText}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 4. CHỌN HỌC SINH
+        function selectStudent(index) {
+            selectedIndex = index;
+            renderTable(); // Cập nhật dòng highlight
+
+            const st = students[index];
+            document.getElementById('displayName').innerText = st.name;
+            document.getElementById('displayId').innerText = "Mã HS: " + st.id;
+
+            // Update nút bấm bên phải
+            updateRatingButtons(st.rank);
+        }
+
+        // 5. CẬP NHẬT TRẠNG THÁI NÚT BẤM
+        function updateRatingButtons(rank) {
+            // Xóa active cũ
+            document.querySelectorAll('.btn-rate').forEach(btn => btn.classList.remove('active'));
+
+            // Thêm active mới
+            if(rank === "Tốt") document.querySelector('.val-tot').classList.add('active');
+            else if(rank === "Khá") document.querySelector('.val-kha').classList.add('active');
+            else if(rank === "Trung Bình") document.querySelector('.val-tb').classList.add('active');
+            else if(rank === "Yếu") document.querySelector('.val-yeu').classList.add('active');
+        }
+
+        // 6. ĐÁNH GIÁ (KHI BẤM NÚT)
+        function rateStudent(rank) {
+            if (selectedIndex === null) return;
+            
+            // Cập nhật data
+            students[selectedIndex].rank = rank;
+            
+            // Cập nhật UI
+            renderTable();
+            updateRatingButtons(rank);
+
+            // Tự động chuyển em tiếp theo (UX thông minh)
+            if (selectedIndex < students.length - 1) {
+                // Delay nhỏ để người dùng thấy hiệu ứng chọn xong
+                setTimeout(() => {
+                    selectStudent(selectedIndex + 1);
+                }, 300);
+            }
+        }
+
+        // 7. LƯU
+        function saveData() {
+            const btn = document.querySelector('.btn-save-conduct');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
+            
+            setTimeout(() => {
+                if(typeof showToast === 'function') showToast("Đã lưu kết quả hạnh kiểm thành công!", "success");
+                else alert("Đã lưu thành công!");
+                btn.innerHTML = originalHTML;
+            }, 800);
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('toggleSidebar');
+            if(sidebar) {
+                sidebar.classList.toggle('collapsed');
+                if (sidebar.classList.contains('collapsed')) {
+                    if(toggleBtn) toggleBtn.classList.add('moved');
+                } else {
+                    if(toggleBtn) toggleBtn.classList.remove('moved');
+                }
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
